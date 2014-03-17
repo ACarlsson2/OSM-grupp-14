@@ -23,7 +23,7 @@ new() -> {fifo, [], []}.
 size({fifo, In, Out}) ->
     length(In) + length(Out).
 
-%% @doc Push
+%% @doc Push 
 %% Puches the emelent X in to the head of the In-list.
 
 %% To make it fast to push new values, add a new value to the head of
@@ -32,11 +32,13 @@ size({fifo, In, Out}) ->
 push({fifo, In, Out}, X) -> 
     {fifo, [X|In], Out}.
 
-%% @doc TODO Add a description
+%% @doc pop 
 %% @throws 'empty fifo'
-%% TODO: add a -spec type declaration
 
 %% pop should return {Value, NewFifo}
+
+-spec pop(Fifo) -> ok when
+      Fifo::fifo().
 
 pop({fifo, [], []}) -> 
     erlang:error('empty fifo');
@@ -54,7 +56,8 @@ pop({fifo, In, []}) ->
     pop({fifo, [], lists:reverse(In)}).
 
 
-%% @doc TODO Add a description
+%% @doc empty
+%% Check if Fifo is empty
 -spec empty(Fifo) -> boolean() when Fifo::fifo().
 
 empty({fifo, [], []}) ->
