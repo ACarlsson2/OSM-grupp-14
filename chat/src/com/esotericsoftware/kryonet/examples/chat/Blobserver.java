@@ -1,26 +1,36 @@
 
 package com.esotericsoftware.kryonet.examples.chat;
 
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+
+
+
+
+
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.kryonet.examples.chat.Network.Blobs;
 import com.esotericsoftware.kryonet.examples.chat.Network.ChatMessage;
 import com.esotericsoftware.kryonet.examples.chat.Network.RegisterName;
+import com.esotericsoftware.kryonet.examples.chat.Network.ServerInputs;
 import com.esotericsoftware.kryonet.examples.chat.Network.UpdateNames;
 import com.esotericsoftware.minlog.Log;
 
-public class ChatServer {
+public class Blobserver {
 	Server server;
 
-	public ChatServer () throws IOException {
+	public Blobserver () throws IOException {
 		server = new Server() {
 			protected Connection newConnection () {
 				// By providing our own connection implementation, we can store per
@@ -38,6 +48,26 @@ public class ChatServer {
 				// We know all connections for this server are actually ChatConnections.
 				ChatConnection connection = (ChatConnection)c;
 
+				if (object instanceof ServerInputs) {
+					Set<ServerInput> input = ((ServerInputs)object).input;
+					for(ServerInput inputValue: input){
+						switch(inputValue.dir){
+						case UP:				// Do this if the input is the up button.
+							connection.blob.position.y += 10;
+							continue;
+						case DOWN:               // Do this if the input is the down button.
+							connection.blob.position.y -= 10;
+							continue;
+						case LEFT:               // Do this if the input is the left button.
+							connection.blob.position.x -= 10;
+							continue;
+						case RIGHT:               // Do this if the input is the right button.
+							connection.blob.position.x += 10;
+							continue;
+						}
+					}
+				}
+				
 				if (object instanceof RegisterName) {
 					// Ignore the object if a client has already registered a name. This is
 					// impossible with our client, but a hacker could send messages at any time.
@@ -49,6 +79,7 @@ public class ChatServer {
 					if (name.length() == 0) return;
 					// Store the name on the connection.
 					connection.name = name;
+					connection.blob = new Blob();
 					// Send a "connected" message to everyone except the new client.
 					ChatMessage chatMessage = new ChatMessage();
 					chatMessage.text = name + " connected.";
@@ -100,6 +131,25 @@ public class ChatServer {
 		frame.setSize(320, 200);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		while(true){
+			Connection[] connections = server.getConnections();
+			ArrayList positions = new ArrayList(connections.length);
+			for (int i = connections.length - 1; i >= 0; i--) {
+				ChatConnection connection = (ChatConnection)connections[i];
+				positions.add(connection.blob.position);
+			}
+			Blobs blobs = new Blobs();
+			blobs.positions = (Point[])positions.toArray(new Point[positions.size()]);
+			server.sendToAllTCP(blobs);
+			try {
+				Thread.sleep(17);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	void updateNames () {
@@ -119,10 +169,11 @@ public class ChatServer {
 	// This holds per connection state.
 	static class ChatConnection extends Connection {
 		public String name;
+		public Blob blob;
 	}
 
 	public static void main (String[] args) throws IOException {
 		Log.set(Log.LEVEL_DEBUG);
-		new ChatServer();
+		new Blobserver();
 	}
 }

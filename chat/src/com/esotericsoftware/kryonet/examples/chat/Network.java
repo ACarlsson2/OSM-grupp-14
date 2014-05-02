@@ -18,10 +18,12 @@ public class Network {
 		Kryo kryo = endPoint.getKryo();
 		kryo.register(RegisterName.class);
 		kryo.register(String[].class);
+		kryo.register(Point.class);
+		kryo.register(Point[].class);
 		kryo.register(UpdateNames.class);
 		kryo.register(ChatMessage.class);
 		kryo.register(Blobs.class);
-		kryo.register(Inputs.class);
+		kryo.register(ServerInputs.class);
 	}
 
 	static public class RegisterName {
@@ -38,7 +40,7 @@ public class Network {
 	static public class Blobs {
 		public Point[] positions;
 	}
-	static public class Inputs {
-		Set<Input> input = new HashSet<Input>();
+	static public class ServerInputs {
+		Set<ServerInput> input = new HashSet<ServerInput>();
 	}
 }
