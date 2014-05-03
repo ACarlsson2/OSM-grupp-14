@@ -133,10 +133,12 @@ public class Blobserver {
 		frame.setVisible(true);
 		
 		while(true){
+			
 			Connection[] connections = server.getConnections();
 			ArrayList positions = new ArrayList(connections.length);
 			for (int i = connections.length - 1; i >= 0; i--) {
 				ChatConnection connection = (ChatConnection)connections[i];
+				if (connection.name == null) continue;
 				positions.add(connection.blob.position);
 			}
 			Blobs blobs = new Blobs();
