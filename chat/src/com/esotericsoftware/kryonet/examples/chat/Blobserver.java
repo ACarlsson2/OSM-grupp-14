@@ -11,12 +11,6 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-
-
-
-
-
-
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
