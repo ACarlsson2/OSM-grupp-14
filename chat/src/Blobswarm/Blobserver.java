@@ -1,5 +1,5 @@
 
-package com.esotericsoftware.kryonet.examples.chat;
+package Blobswarm;
 
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
@@ -11,18 +11,20 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import Blobswarm.Network.Blobs;
+import Blobswarm.Network.ChatMessage;
+import Blobswarm.Network.RegisterName;
+import Blobswarm.Network.ServerInputs;
+import Blobswarm.Network.UpdateNames;
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.esotericsoftware.kryonet.examples.chat.Network.Blobs;
-import com.esotericsoftware.kryonet.examples.chat.Network.ChatMessage;
-import com.esotericsoftware.kryonet.examples.chat.Network.RegisterName;
-import com.esotericsoftware.kryonet.examples.chat.Network.ServerInputs;
-import com.esotericsoftware.kryonet.examples.chat.Network.UpdateNames;
 import com.esotericsoftware.minlog.Log;
 
 public class Blobserver {
 	Server server;
+	int blobIDs = 0;
 
 	public Blobserver () throws IOException {
 		server = new Server() {
@@ -43,23 +45,24 @@ public class Blobserver {
 				ChatConnection connection = (ChatConnection)c;
 
 				if (object instanceof ServerInputs) {
-					Set<ServerInput> input = ((ServerInputs)object).input;
-					for(ServerInput inputValue: input){
-						switch(inputValue.dir){
-						case UP:				// Do this if the input is the up button.
-							connection.blob.position.y += 10;
-							continue;
-						case DOWN:               // Do this if the input is the down button.
+					if (connection.name == null) return;
+					Character input = ((ServerInputs)object).input;		
+						switch(input){
+						case 'w':				// Do this if the input is the up button.
 							connection.blob.position.y -= 10;
-							continue;
-						case LEFT:               // Do this if the input is the left button.
+							break;
+						case 's':               // Do this if the input is the down button.
+							connection.blob.position.y += 10;
+							break;
+						case 'a':               // Do this if the input is the left button.
 							connection.blob.position.x -= 10;
-							continue;
-						case RIGHT:               // Do this if the input is the right button.
+							break;
+						case 'd':               // Do this if the input is the right button.
 							connection.blob.position.x += 10;
-							continue;
+							break;
 						}
-					}
+					
+					return;
 				}
 				
 				if (object instanceof RegisterName) {
@@ -74,6 +77,8 @@ public class Blobserver {
 					// Store the name on the connection.
 					connection.name = name;
 					connection.blob = new Blob();
+					connection.blob.ID = blobIDs;
+					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.
 					ChatMessage chatMessage = new ChatMessage();
 					chatMessage.text = name + " connected.";
@@ -129,15 +134,15 @@ public class Blobserver {
 		while(true){
 			
 			Connection[] connections = server.getConnections();
-			ArrayList positions = new ArrayList(connections.length);
+			ArrayList blobs = new ArrayList(connections.length);
 			for (int i = connections.length - 1; i >= 0; i--) {
 				ChatConnection connection = (ChatConnection)connections[i];
 				if (connection.name == null) continue;
-				positions.add(connection.blob.position);
+				blobs.add(connection.blob);
 			}
-			Blobs blobs = new Blobs();
-			blobs.positions = (Point[])positions.toArray(new Point[positions.size()]);
-			server.sendToAllTCP(blobs);
+			Blobs blobArray = new Blobs();
+			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
+			server.sendToAllTCP(blobArray);
 			try {
 				Thread.sleep(17);
 			} catch (InterruptedException e) {

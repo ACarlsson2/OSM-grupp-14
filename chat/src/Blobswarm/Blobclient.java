@@ -1,5 +1,5 @@
 
-package com.esotericsoftware.kryonet.examples.chat;
+package Blobswarm;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -13,11 +13,19 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -35,25 +43,29 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import Blobswarm.Network.ServerInputs;
+import Blobswarm.ServerInput;
+import Blobswarm.Network.Blobs;
+import Blobswarm.Network.ChatMessage;
+import Blobswarm.Network.RegisterName;
+import Blobswarm.Network.UpdateNames;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.examples.chat.Network.Blobs;
-import com.esotericsoftware.kryonet.examples.chat.Network.ChatMessage;
-import com.esotericsoftware.kryonet.examples.chat.Network.RegisterName;
-import com.esotericsoftware.kryonet.examples.chat.Network.UpdateNames;
 import com.esotericsoftware.minlog.Log;
 
-public class ChatClient {
+public class Blobclient implements KeyListener {
 	ChatFrame chatFrame;
 	Client client;
 	String name;
-
-	public ChatClient () {
+	ArrayList existingBlobs = new ArrayList();
+	ArrayList balls = new ArrayList();
+		
+	public Blobclient () {
 		client = new Client();
 		client.start();
-
+		
 		// For consistency, the classes to be sent over the network are
 		// registered by the same method for both the client and server.
 		Network.register(client);
@@ -73,7 +85,26 @@ public class ChatClient {
 				}
 
 				if (object instanceof Blobs) {
-					//DO THINGS
+					Blobs blobArray = (Blobs)object;
+					Blob[] blobinfo = blobArray.blobs;
+					if(blobinfo.length > 0){
+					for(int i = blobinfo.length - 1; i >= 0; i--)
+					{
+						if(!existingBlobs.contains(blobinfo[i]))
+						{
+						existingBlobs.add(blobinfo[i].ID);
+						Ball newBall = new Ball();
+						balls.add(newBall);
+						chatFrame.getPanel().add(newBall.getJComponent());
+						}
+					}
+					for(int i = blobinfo.length - 1; i >= 0; i--)
+					{
+						Ball currBall = (Ball)balls.get(i);
+						currBall.update(blobinfo[i].position, 0);
+					}
+					}
+					
 				}
 			}
 
@@ -87,6 +118,8 @@ public class ChatClient {
 			}
 		});
 
+		
+		
 		// Request the host from the user.
 		String input = (String)JOptionPane.showInputDialog(null, "Host:", "Connect to chat server", JOptionPane.QUESTION_MESSAGE,
 			null, null, "localhost");
@@ -102,6 +135,8 @@ public class ChatClient {
 		// All the ugly Swing stuff is hidden in ChatFrame so it doesn't clutter the KryoNet example code.
 		chatFrame = new ChatFrame(host);
 
+		chatFrame.addKeyListener(this);
+		
 		// This listener is called when the chat window is closed.
 		chatFrame.setCloseListener(new Runnable() {
 			public void run () {
@@ -123,18 +158,33 @@ public class ChatClient {
 				}
 			}
 		}.start();
+		
 	}
 
+	public void keyPressed(KeyEvent e) { 
+		ServerInputs x = new ServerInputs();
+		x.input = e.getKeyChar();
+		client.sendTCP(x);
+		
+	}
+
+    public void keyTyped(KeyEvent e) {
+    	
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+	
 	static private class ChatFrame extends JFrame {
 		CardLayout cardLayout;
 		JProgressBar progressBar;
+		JPanel thePanel;
 
 		public ChatFrame (String host) {
 			super("Blobswarm");
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(600, 600);
 			setLocationRelativeTo(null);
-			final Ball ball = new Ball();
 			
 			
 			Container contentPane = getContentPane();
@@ -151,13 +201,13 @@ public class ChatClient {
 			}
 			{
 				JPanel panel = new JPanel(new BorderLayout());
+				thePanel = panel;
 				JLabel background = new JLabel("");
                 background.setBackground(Color.WHITE);
                 background.setOpaque(true);
                 background.setBorder(BorderFactory.createLineBorder(Color.WHITE));
                 background.setBounds(0,0,600,600);
                 panel.add(background);
-                panel.add(ball.getJComponent());
 				contentPane.add(panel, "chat");
 				
 			}
@@ -173,7 +223,9 @@ public class ChatClient {
 			});
 		}
 
-
+		public JPanel getPanel () {
+			return thePanel;
+		}
 
 		public void setNames (final String[] names) {
 			// This listener is run on the client's update thread, which was started by client.start().
@@ -184,14 +236,17 @@ public class ChatClient {
 					
 				}
 			});
+		
+		
 		}
 	}
 
 	public static void main (String[] args) {
 		Log.set(Log.LEVEL_DEBUG);
-		new ChatClient();
+		new Blobclient();
 	}
 }
+
 class Ball {
     public static final int SIZE = 50;
     BufferedImage image;
@@ -222,7 +277,6 @@ class Ball {
         this.comp.setBackground(Color.WHITE);
         this.comp.setOpaque(true);
     }
-
     public void update(Point loc, int dir) {
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
         File tempfile;
@@ -252,4 +306,3 @@ class Ball {
         return this.comp;
     }
 }
-
