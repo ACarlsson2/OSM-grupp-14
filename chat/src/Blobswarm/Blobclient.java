@@ -101,7 +101,7 @@ public class Blobclient implements KeyListener {
 					for(int i = blobinfo.length - 1; i >= 0; i--)
 					{
 						Ball currBall = (Ball)balls.get(i);
-						currBall.update(blobinfo[i].position, 0);
+						currBall.update(blobinfo[i].position, blobinfo[i].dir);
 					}
 					}
 					
