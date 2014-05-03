@@ -49,23 +49,18 @@ public class Blobserver {
 					Character input = ((ServerInputs)object).input;		
 						switch(input){
 						case 'w':				// Do this if the input is the up button.
-							connection.blob.position.y -= 10;
-							connection.blob.dir = 1;
+							connection.blob.move(1);
 							break;
 						case 's':               // Do this if the input is the down button.
-							connection.blob.position.y += 10;
-							connection.blob.dir = 2;
+							connection.blob.move(2);
 							break;
 						case 'a':               // Do this if the input is the left button.
-							connection.blob.position.x -= 10;
-							connection.blob.dir = 3;
+							connection.blob.move(3);
 							break;
 						case 'd':               // Do this if the input is the right button.
-							connection.blob.position.x += 10;
-							connection.blob.dir = 4;
+							connection.blob.move(4);
 							break;
-						}
-					
+						}					
 					return;
 				}
 				
@@ -81,7 +76,7 @@ public class Blobserver {
 					// Store the name on the connection.
 					connection.name = name;
 					connection.blob = new Blob();
-					connection.blob.ID = blobIDs;
+					connection.blob.setId(blobIDs);
 					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.
 					ChatMessage chatMessage = new ChatMessage();

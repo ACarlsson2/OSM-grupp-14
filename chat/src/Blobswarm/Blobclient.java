@@ -92,7 +92,7 @@ public class Blobclient implements KeyListener {
 					{
 						if(!existingBlobs.contains(blobinfo[i]))
 						{
-						existingBlobs.add(blobinfo[i].ID);
+						existingBlobs.add(blobinfo[i].getId());
 						Ball newBall = new Ball();
 						balls.add(newBall);
 						chatFrame.getPanel().add(newBall.getJComponent());
@@ -101,7 +101,7 @@ public class Blobclient implements KeyListener {
 					for(int i = blobinfo.length - 1; i >= 0; i--)
 					{
 						Ball currBall = (Ball)balls.get(i);
-						currBall.update(blobinfo[i].position, blobinfo[i].dir);
+						currBall.update(blobinfo[i].getPosition(), blobinfo[i].getDirection());
 					}
 					}
 					
