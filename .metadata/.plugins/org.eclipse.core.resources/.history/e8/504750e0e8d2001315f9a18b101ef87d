@@ -134,7 +134,7 @@ public class ChatClient {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(600, 600);
 			setLocationRelativeTo(null);
-			final Ball ball = new Ball();
+			final Ball ball;
 			
 			
 			Container contentPane = getContentPane();

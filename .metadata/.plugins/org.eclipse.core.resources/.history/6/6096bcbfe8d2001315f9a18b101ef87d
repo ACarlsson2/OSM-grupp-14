@@ -35,7 +35,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -134,9 +133,7 @@ public class ChatClient {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(600, 600);
 			setLocationRelativeTo(null);
-			final Ball ball = new Ball();
-			
-			
+
 			Container contentPane = getContentPane();
 			cardLayout = new CardLayout();
 			contentPane.setLayout(cardLayout);
@@ -157,7 +154,6 @@ public class ChatClient {
                 background.setBorder(BorderFactory.createLineBorder(Color.WHITE));
                 background.setBounds(0,0,600,600);
                 panel.add(background);
-                panel.add(ball.getJComponent());
 				contentPane.add(panel, "chat");
 				
 			}

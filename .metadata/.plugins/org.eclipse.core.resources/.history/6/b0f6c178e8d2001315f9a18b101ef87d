@@ -10,22 +10,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -134,9 +127,7 @@ public class ChatClient {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(600, 600);
 			setLocationRelativeTo(null);
-			final Ball ball = new Ball();
-			
-			
+
 			Container contentPane = getContentPane();
 			cardLayout = new CardLayout();
 			contentPane.setLayout(cardLayout);
@@ -157,7 +148,6 @@ public class ChatClient {
                 background.setBorder(BorderFactory.createLineBorder(Color.WHITE));
                 background.setBounds(0,0,600,600);
                 panel.add(background);
-                panel.add(ball.getJComponent());
 				contentPane.add(panel, "chat");
 				
 			}
@@ -192,64 +182,3 @@ public class ChatClient {
 		new ChatClient();
 	}
 }
-class Ball {
-    public static final int SIZE = 50;
-    BufferedImage image;
-    private JComponent comp;
-    String path0 = "Blob0.png";
-    File file0 = new File(path0);
-    String path1 = "Blob1.png";
-    File file1 = new File(path1);
-    String path2 = "Blob2.png";
-    File file2 = new File(path2);
-    String path3 = "Blob3.png";
-    File file3 = new File(path3);
-    String path4 = "Blob4.png";
-    File file4 = new File(path4);
-
-    public Ball() {
-        
-
-		try {
-			image = ImageIO.read(file0);
-			comp = new JLabel(new ImageIcon(image));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
-        this.comp.setBackground(Color.WHITE);
-        this.comp.setOpaque(true);
-    }
-
-    public void update(Point loc, int dir) {
-        this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
-        File tempfile;
-        switch(dir){
-        case 0: tempfile = file0;
-        break;
-        case 1: tempfile = file1;
-        break;
-        case 2: tempfile = file2;
-        break;
-        case 3: tempfile = file3;
-        break;
-        default: tempfile = file4;
-        break;
-        }
-        try {
-			image = ImageIO.read(tempfile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        JLabel temp = (JLabel) comp;
-        temp.setIcon(new ImageIcon(image));
-    }
-
-    public JComponent getJComponent() {
-        return this.comp;
-    }
-}
-
