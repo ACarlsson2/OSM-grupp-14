@@ -94,14 +94,14 @@ public class Blobclient implements KeyListener {
 						if(!existingBlobs.contains(blobinfo[i]))
 						{
 						existingBlobs.add(blobinfo[i].getId());
-						Ball newBall = new Ball();
+						BlobView newBall = new BlobView();
 						balls.add(newBall);
 						chatFrame.getPanel().add(newBall.getJComponent());
 						}
 					}
 					for(int i = blobinfo.length - 1; i >= 0; i--)
 					{
-						Ball currBall = (Ball)balls.get(i);
+						BlobView currBall = (BlobView)balls.get(i);
 						currBall.update(blobinfo[i].getPosition(), blobinfo[i].getDirection());
 					}
 					}
@@ -248,9 +248,9 @@ public class Blobclient implements KeyListener {
 	}
 }
 
-class Ball {
+class BlobView {
     public static final int SIZE = 50;
-    BufferedImage image;
+    BufferedImage image = null;
     private JComponent comp;
     String path0 = "Blob0.png";
     File file0 = new File(path0);
@@ -263,7 +263,7 @@ class Ball {
     String path4 = "Blob4.png";
     File file4 = new File(path4);
 
-    public Ball() {
+    public BlobView() {
         
 
 		try {
