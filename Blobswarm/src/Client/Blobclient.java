@@ -11,15 +11,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,13 +25,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -62,8 +56,8 @@ public class Blobclient implements KeyListener {
 	ChatFrame chatFrame;
 	Client client;
 	String name;
-	ArrayList<Integer> existingBlobIDs = new ArrayList();
-	ArrayList<BlobView> blobViews = new ArrayList();
+	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
+	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
 		
 	public Blobclient () {
 		client = new Client();
@@ -89,7 +83,7 @@ public class Blobclient implements KeyListener {
 
 				if (object instanceof Blobs) {
 					Blobs blobArray = (Blobs)object;
-					ArrayList<Blob> blobinfo = new ArrayList(blobArray.blobs.length);
+					ArrayList<Blob> blobinfo = new ArrayList<Blob>(blobArray.blobs.length);
 					
 					for (int i = blobArray.blobs.length - 1; i >= 0; i--) {
 						blobinfo.add(blobArray.blobs[i]);
@@ -273,65 +267,4 @@ public class Blobclient implements KeyListener {
 		Log.set(Log.LEVEL_DEBUG);
 		new Blobclient();
 	}
-}
-
-class BlobView {
-    public static final int SIZE = 50;
-    BufferedImage image = null;
-    private JComponent comp;
-    String path0 = "Blob0.png";
-    File file0 = new File(path0);
-    String path1 = "Blob1.png";
-    File file1 = new File(path1);
-    String path2 = "Blob2.png";
-    File file2 = new File(path2);
-    String path3 = "Blob3.png";
-    File file3 = new File(path3);
-    String path4 = "Blob4.png";
-    File file4 = new File(path4);
-
-    public BlobView() {
-        
-
-		try {
-			image = ImageIO.read(file0);
-			comp = new JLabel(new ImageIcon(image));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
-        this.comp.setBackground(Color.WHITE);
-        this.comp.setOpaque(true);
-    }
-    public void update(Point loc, int dir) {
-        this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
-        File tempfile;
-        switch(dir){
-        case 0: tempfile = file0;
-        break;
-        case 1: tempfile = file1;
-        break;
-        case 2: tempfile = file2;
-        break;
-        case 3: tempfile = file3;
-        break;
-        default: tempfile = file4;
-        break;
-        }
-        try {
-			image = ImageIO.read(tempfile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        JLabel temp = (JLabel) comp;
-        if(temp.getIcon()!=image)
-        temp.setIcon(new ImageIcon(image));
-    }
-
-    public JComponent getJComponent() {
-        return this.comp;
-    }
 }
