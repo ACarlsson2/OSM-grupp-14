@@ -27,6 +27,8 @@ import com.esotericsoftware.minlog.Log;
 public class Blobserver {
 	Server server;
 	int blobIDs = 0;
+	int FPS = 30;
+	
 
 	public Blobserver () throws IOException {
 		server = new Server() {
@@ -89,45 +91,21 @@ public class Blobserver {
 					return;
 				}
 
-				if (object instanceof ChatMessage) {
-					// Ignore the object if a client tries to chat before registering a name.
-					if (connection.name == null) return;
-					ChatMessage chatMessage = (ChatMessage)object;
-					// Ignore the object if the chat message is invalid.
-					String message = chatMessage.text;
-					if (message == null) return;
-					message = message.trim();
-					if (message.length() == 0) return;
-					// Prepend the connection's name and send to everyone.
-					chatMessage.text = connection.name + ": " + message;
-					server.sendToAllTCP(chatMessage);
-					return;
-				}
 			}
 
-			public void disconnected (Connection c) {
-				ChatConnection connection = (ChatConnection)c;
-				if (connection.name != null) {
-					// Announce to everyone that someone (with a registered name) has left.
-					ChatMessage chatMessage = new ChatMessage();
-					chatMessage.text = connection.name + " disconnected.";
-					server.sendToAllTCP(chatMessage);
-					updateNames();
-				}
-			}
 		});
 		server.bind(Network.port);
 		server.start();
 
 		// Open a window to provide an easy way to stop the server.
-		JFrame frame = new JFrame("Chat Server");
+		JFrame frame = new JFrame("Blobserver");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosed (WindowEvent evt) {
 				server.stop();
 			}
 		});
-		frame.getContentPane().add(new JLabel("Close to stop the chat server."));
+		frame.getContentPane().add(new JLabel("Close to stop the Blobserver."));
 		frame.setSize(320, 200);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -145,7 +123,7 @@ public class Blobserver {
 			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
 			server.sendToAllTCP(blobArray);
 			try {
-				Thread.sleep(17);
+				Thread.sleep(1000/FPS);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -61,7 +61,7 @@ public class Blobclient implements KeyListener {
 	Client client;
 	String name;
 	ArrayList existingBlobs = new ArrayList();
-	ArrayList balls = new ArrayList();
+	ArrayList blobViews = new ArrayList();
 		
 	public Blobclient () {
 		client = new Client();
@@ -95,13 +95,13 @@ public class Blobclient implements KeyListener {
 						{
 						existingBlobs.add(blobinfo[i].getId());
 						BlobView newBall = new BlobView();
-						balls.add(newBall);
+						blobViews.add(newBall);
 						chatFrame.getPanel().add(newBall.getJComponent());
 						}
 					}
 					for(int i = blobinfo.length - 1; i >= 0; i--)
 					{
-						BlobView currBall = (BlobView)balls.get(i);
+						BlobView currBall = (BlobView)blobViews.get(i);
 						currBall.update(blobinfo[i].getPosition(), blobinfo[i].getDirection());
 					}
 					}
@@ -300,6 +300,7 @@ class BlobView {
 			e.printStackTrace();
 		}
         JLabel temp = (JLabel) comp;
+        if(temp.getIcon()!=image)
         temp.setIcon(new ImageIcon(image));
     }
 
