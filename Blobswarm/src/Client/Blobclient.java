@@ -97,6 +97,7 @@ public class Blobclient implements KeyListener {
 						BlobView newBall = new BlobView();
 						blobViews.add(newBall);
 						chatFrame.getPanel().add(newBall.getJComponent());
+						chatFrame.getPanel().setComponentZOrder(newBall.getJComponent(), 0);
 						}
 					}
 					for(int i = blobinfo.length - 1; i >= 0; i--)
