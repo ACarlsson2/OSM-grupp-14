@@ -1,4 +1,3 @@
-
 package Client;
 
 import java.awt.BorderLayout;
@@ -53,162 +52,170 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
 public class Blobclient implements KeyListener {
+	// Fields
 	ChatFrame chatFrame;
 	Client client;
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
 	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
-		
-	public Blobclient () {
+
+	// Constructor
+	public Blobclient() {
 		client = new Client();
 		client.start();
-		
+
 		// For consistency, the classes to be sent over the network are
 		// registered by the same method for both the client and server.
 		Network.register(client);
 
 		client.addListener(new Listener() {
-			public void connected (Connection connection) {
+			public void connected(Connection connection) {
 				RegisterName registerName = new RegisterName();
 				registerName.name = name;
 				client.sendTCP(registerName);
 			}
 
-			public void received (Connection connection, Object object) {
+			public void received(Connection connection, Object object) {
 				if (object instanceof UpdateNames) {
-					UpdateNames updateNames = (UpdateNames)object;
+					UpdateNames updateNames = (UpdateNames) object;
 					chatFrame.setNames(updateNames.names);
 					return;
 				}
 
 				if (object instanceof Blobs) {
-					Blobs blobArray = (Blobs)object;
-					ArrayList<Blob> blobinfo = new ArrayList<Blob>(blobArray.blobs.length);
-					
+					Blobs blobArray = (Blobs) object;
+					ArrayList<Blob> blobinfo = new ArrayList<Blob>(
+							blobArray.blobs.length);
+
 					for (int i = blobArray.blobs.length - 1; i >= 0; i--) {
 						blobinfo.add(blobArray.blobs[i]);
 					}
-					
-					if(blobinfo.size() > 0){
-						
-					for(int i = blobinfo.size() - 1; i >= 0; i--)
-					{
-						if(!existingBlobIDs.contains(blobinfo.get(i)))
-						{
-						existingBlobIDs.add(( blobinfo.get(i)).getId());
-						BlobView newBlob = new BlobView();
-						blobViews.add(newBlob);
-						chatFrame.getPanel().add(newBlob.getJComponent());
-						chatFrame.getPanel().setComponentZOrder(newBlob.getJComponent(), 0);
-						}
-					}
-					
-					for(int i = 0; i < existingBlobIDs.size(); i++)
-					{
-						boolean found = false;
-						for(int a = 0; a < blobinfo.size(); a++)
-						{
-							if (blobinfo.get(a).getId() == existingBlobIDs.get(i)) 
-								{
-								found = true;
-								}
-						}
-						if(!found) 
-							{
-							chatFrame.getPanel().remove(((BlobView) blobViews.get(i)).getJComponent());
+
+					if (blobinfo.size() > 0) {
+
+						for (int i = blobinfo.size() - 1; i >= 0; i--) {
+							if (!existingBlobIDs.contains(blobinfo.get(i))) {
+								existingBlobIDs.add((blobinfo.get(i)).getId());
+								BlobView newBlob = new BlobView();
+								blobViews.add(newBlob);
+								chatFrame.getPanel().add(
+										newBlob.getJComponent());
+								chatFrame.getPanel().setComponentZOrder(
+										newBlob.getJComponent(), 0);
 							}
+						}
+
+						for (int i = 0; i < existingBlobIDs.size(); i++) {
+							boolean found = false;
+							for (int a = 0; a < blobinfo.size(); a++) {
+								if (blobinfo.get(a).getId() == existingBlobIDs
+										.get(i)) {
+									found = true;
+								}
+							}
+							if (!found) {
+								chatFrame.getPanel().remove(
+										((BlobView) blobViews.get(i))
+												.getJComponent());
+							}
+						}
+
+						for (int i = blobinfo.size() - 1; i >= 0; i--) {
+							BlobView currBlob = (BlobView) blobViews
+									.get(blobinfo.get(i).getId());
+							currBlob.update(blobinfo.get(i).getPosition(),
+									blobinfo.get(i).getDirection());
+						}
 					}
-					
-					for(int i = blobinfo.size() - 1; i >= 0; i--)
-					{					
-						BlobView currBall = (BlobView)blobViews.get(i);
-						currBall.update(blobinfo.get(i).getPosition(), blobinfo.get(i).getDirection());
-						
-					}
-					}
-					
 				}
 			}
 
-			public void disconnected (Connection connection) {
+			public void disconnected(Connection connection) {
 				EventQueue.invokeLater(new Runnable() {
-					public void run () {
-						// Closing the frame calls the close listener which will stop the client's update thread.
+					public void run() {
+						// Closing the frame calls the close listener which will
+						// stop the client's update thread.
 						chatFrame.dispose();
 					}
 				});
 			}
 		});
 
-		
-		
 		// Request the host from the user.
-		String input = (String)JOptionPane.showInputDialog(null, "Host:", "Connect to Blobserver", JOptionPane.QUESTION_MESSAGE,
-			null, null, "localhost");
-		if (input == null || input.trim().length() == 0) System.exit(1);
+		String input = (String) JOptionPane.showInputDialog(null, "Host:",
+				"Connect to Blobserver", JOptionPane.QUESTION_MESSAGE, null,
+				null, "localhost");
+		if (input == null || input.trim().length() == 0)
+			System.exit(1);
 		final String host = input.trim();
 
 		// Request the user's name.
-		input = (String)JOptionPane.showInputDialog(null, "Name:", "Connect to Blobserver", JOptionPane.QUESTION_MESSAGE, null,
-			null, "Test");
-		if (input == null || input.trim().length() == 0) System.exit(1);
+		input = (String) JOptionPane.showInputDialog(null, "Name:",
+				"Connect to Blobserver", JOptionPane.QUESTION_MESSAGE, null,
+				null, "Test");
+		if (input == null || input.trim().length() == 0)
+			System.exit(1);
 		name = input.trim();
 
-		// All the ugly Swing stuff is hidden in ChatFrame so it doesn't clutter the KryoNet example code.
+		// All the ugly Swing stuff is hidden in ChatFrame so it doesn't clutter
+		// the KryoNet example code.
 		chatFrame = new ChatFrame(host);
 
 		chatFrame.addKeyListener(this);
-		
+
 		// This listener is called when the chat window is closed.
 		chatFrame.setCloseListener(new Runnable() {
-			public void run () {
+			public void run() {
 				client.stop();
 			}
 		});
 		chatFrame.setVisible(true);
 
-		// We'll do the connect on a new thread so the ChatFrame can show a progress bar.
-		// Connecting to localhost is usually so fast you won't see the progress bar.
+		// We'll do the connect on a new thread so the ChatFrame can show a
+		// progress bar.
+		// Connecting to localhost is usually so fast you won't see the progress
+		// bar.
 		new Thread("Connect") {
-			public void run () {
+			public void run() {
 				try {
 					client.connect(5000, host, Network.port);
-					// Server communication after connection can go here, or in Listener#connected().
+					// Server communication after connection can go here, or in
+					// Listener#connected().
 				} catch (IOException ex) {
 					ex.printStackTrace();
 					System.exit(1);
 				}
 			}
 		}.start();
-		
-	}
 
-	public void keyPressed(KeyEvent e) { 
+	}
+	
+	//Methods
+	public void keyPressed(KeyEvent e) {
 		ServerInput key = new ServerInput();
 		key.input = e.getKeyChar();
 		client.sendTCP(key);
-		
+
 	}
 
-    public void keyTyped(KeyEvent e) {
-    	
-    }
+	public void keyTyped(KeyEvent e) {
 
-    public void keyReleased(KeyEvent e) {
-    }
-	
+	}
+
+	public void keyReleased(KeyEvent e) {
+	}
+
 	static private class ChatFrame extends JFrame {
 		CardLayout cardLayout;
 		JProgressBar progressBar;
 		JPanel thePanel;
 
-		public ChatFrame (String host) {
+		public ChatFrame(String host) {
 			super("Blobswarm");
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(600, 600);
 			setLocationRelativeTo(null);
-			
-			
+
 			Container contentPane = getContentPane();
 			cardLayout = new CardLayout();
 			contentPane.setLayout(cardLayout);
@@ -217,7 +224,8 @@ public class Blobclient implements KeyListener {
 				contentPane.add(panel, "progress");
 				panel.add(new JLabel("Connecting to " + host + "..."));
 				{
-					panel.add(progressBar = new JProgressBar(), BorderLayout.SOUTH);
+					panel.add(progressBar = new JProgressBar(),
+							BorderLayout.SOUTH);
 					progressBar.setIndeterminate(true);
 				}
 			}
@@ -225,45 +233,46 @@ public class Blobclient implements KeyListener {
 				JPanel panel = new JPanel(new BorderLayout());
 				thePanel = panel;
 				JLabel background = new JLabel("");
-                background.setBackground(Color.WHITE);
-                background.setOpaque(true);
-                background.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-                background.setBounds(0,0,600,600);
-                panel.add(background);
+				background.setBackground(Color.WHITE);
+				background.setOpaque(true);
+				background.setBorder(BorderFactory
+						.createLineBorder(Color.WHITE));
+				background.setBounds(0, 0, 600, 600);
+				panel.add(background);
 				contentPane.add(panel, "blob");
-				
+
 			}
 		}
 
-		public void setCloseListener (final Runnable listener) {
+		public void setCloseListener(final Runnable listener) {
 			addWindowListener(new WindowAdapter() {
-				public void windowClosed (WindowEvent evt) {
+				public void windowClosed(WindowEvent evt) {
 					listener.run();
 				}
 
-				
 			});
 		}
 
-		public JPanel getPanel () {
+		public JPanel getPanel() {
 			return thePanel;
 		}
 
-		public void setNames (final String[] names) {
-			// This listener is run on the client's update thread, which was started by client.start().
-			// We must be careful to only interact with Swing components on the Swing event thread.
+		public void setNames(final String[] names) {
+			// This listener is run on the client's update thread, which was
+			// started by client.start().
+			// We must be careful to only interact with Swing components on the
+			// Swing event thread.
 			EventQueue.invokeLater(new Runnable() {
-				public void run () {
+				public void run() {
 					cardLayout.show(getContentPane(), "blob");
-					
+
 				}
 			});
-		
-		
+
 		}
 	}
 
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		Log.set(Log.LEVEL_DEBUG);
 		new Blobclient();
 	}

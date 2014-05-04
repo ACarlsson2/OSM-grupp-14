@@ -3,7 +3,7 @@ package Common;
 import java.awt.Point;
 
 public class Blob {
-	
+	//Fields
 	private Point position;
 	private int id;
 	private int direction;
