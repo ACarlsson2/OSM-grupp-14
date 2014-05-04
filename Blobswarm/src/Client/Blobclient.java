@@ -51,6 +51,7 @@ import Common.Network.ChatMessage;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
+import Server.Blobserver.ChatConnection;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -61,8 +62,8 @@ public class Blobclient implements KeyListener {
 	ChatFrame chatFrame;
 	Client client;
 	String name;
-	ArrayList existingBlobs = new ArrayList();
-	ArrayList blobViews = new ArrayList();
+	ArrayList<Integer> existingBlobIDs = new ArrayList();
+	ArrayList<BlobView> blobViews = new ArrayList();
 		
 	public Blobclient () {
 		client = new Client();
@@ -88,23 +89,46 @@ public class Blobclient implements KeyListener {
 
 				if (object instanceof Blobs) {
 					Blobs blobArray = (Blobs)object;
-					Blob[] blobinfo = blobArray.blobs;
-					if(blobinfo.length > 0){
-					for(int i = blobinfo.length - 1; i >= 0; i--)
+					ArrayList<Blob> blobinfo = new ArrayList(blobArray.blobs.length);
+					
+					for (int i = blobArray.blobs.length - 1; i >= 0; i--) {
+						blobinfo.add(blobArray.blobs[i]);
+					}
+					
+					if(blobinfo.size() > 0){
+						
+					for(int i = blobinfo.size() - 1; i >= 0; i--)
 					{
-						if(!existingBlobs.contains(blobinfo[i]))
+						if(!existingBlobIDs.contains(blobinfo.get(i)))
 						{
-						existingBlobs.add(blobinfo[i].getId());
+						existingBlobIDs.add(( blobinfo.get(i)).getId());
 						BlobView newBlob = new BlobView();
 						blobViews.add(newBlob);
 						chatFrame.getPanel().add(newBlob.getJComponent());
 						chatFrame.getPanel().setComponentZOrder(newBlob.getJComponent(), 0);
 						}
 					}
-					for(int i = blobinfo.length - 1; i >= 0; i--)
+					
+					for(int i = 0; i < existingBlobIDs.size(); i++)
+					{
+						boolean found = false;
+						for(int a = 0; a < blobinfo.size(); a++)
+						{
+							if (blobinfo.get(a).getId() == existingBlobIDs.get(i)) 
+								{
+								found = true;
+								}
+						}
+						if(!found) 
+							{
+							chatFrame.getPanel().remove(((BlobView) blobViews.get(i)).getJComponent());
+							}
+					}
+					
+					for(int i = blobinfo.size() - 1; i >= 0; i--)
 					{					
 						BlobView currBall = (BlobView)blobViews.get(i);
-						currBall.update(blobinfo[i].getPosition(), blobinfo[i].getDirection());
+						currBall.update(blobinfo.get(i).getPosition(), blobinfo.get(i).getDirection());
 						
 					}
 					}

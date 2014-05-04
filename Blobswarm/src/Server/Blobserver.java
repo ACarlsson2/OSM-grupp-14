@@ -147,7 +147,7 @@ public class Blobserver {
 	}
 
 	// This holds per connection state.
-	static class ChatConnection extends Connection {
+	public static class ChatConnection extends Connection {
 		public String name;
 		public Blob blob;
 	}
