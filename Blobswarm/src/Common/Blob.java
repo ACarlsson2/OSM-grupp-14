@@ -46,16 +46,16 @@ public class Blob {
 	//Help methods
 	private void updateLocation(int direction) {		
 		switch (direction) {
-		case 1:
+		case 1:	//Upp
 			this.position.y -= 10;
 		break;
-		case 2:
+		case 2:	//Down
 			this.position.y += 10;
 		break;
-		case 3:
+		case 3:	//Left
 			this.position.x -= 10;
 		break;
-		case 4:
+		case 4:	//Right
 			this.position.x += 10;
 		break;
 			default:

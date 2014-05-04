@@ -6,6 +6,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -94,16 +95,17 @@ public class Blobclient implements KeyListener {
 						if(!existingBlobs.contains(blobinfo[i]))
 						{
 						existingBlobs.add(blobinfo[i].getId());
-						BlobView newBall = new BlobView();
-						blobViews.add(newBall);
-						chatFrame.getPanel().add(newBall.getJComponent());
-						chatFrame.getPanel().setComponentZOrder(newBall.getJComponent(), 0);
+						BlobView newBlob = new BlobView();
+						blobViews.add(newBlob);
+						chatFrame.getPanel().add(newBlob.getJComponent());
+						chatFrame.getPanel().setComponentZOrder(newBlob.getJComponent(), 0);
 						}
 					}
 					for(int i = blobinfo.length - 1; i >= 0; i--)
-					{
+					{					
 						BlobView currBall = (BlobView)blobViews.get(i);
 						currBall.update(blobinfo[i].getPosition(), blobinfo[i].getDirection());
+						
 					}
 					}
 					
