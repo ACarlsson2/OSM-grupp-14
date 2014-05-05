@@ -114,7 +114,7 @@ public class Blobserver {
 			
 			Connection[] connections = server.getConnections();
 			ArrayList blobs = new ArrayList(connections.length);
-			for (int i = connections.length - 1; i >= 0; i--) {
+			for (int i = 0; i < connections.length; i++) {
 				ChatConnection connection = (ChatConnection)connections[i];
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);

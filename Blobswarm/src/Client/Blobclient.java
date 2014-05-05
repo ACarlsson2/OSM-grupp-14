@@ -87,49 +87,72 @@ public class Blobclient implements KeyListener {
 					ArrayList<Blob> blobinfo = new ArrayList<Blob>(
 							blobArray.blobs.length);
 
-					for (int i = blobArray.blobs.length - 1; i >= 0; i--) {
+					for (int i = 0; i < blobArray.blobs.length; i++) {
 						blobinfo.add(blobArray.blobs[i]);
 					}
 
 					if (blobinfo.size() > 0) {
 
-						for (int i = blobinfo.size() - 1; i >= 0; i--) {
-							if (!existingBlobIDs.contains(blobinfo.get(i))) {
-								existingBlobIDs.add((blobinfo.get(i)).getId());
-								BlobView newBlob = new BlobView();
-								blobViews.add(newBlob);
-								chatFrame.getPanel().add(
-										newBlob.getJComponent());
-								chatFrame.getPanel().setComponentZOrder(
-										newBlob.getJComponent(), 0);
-							}
-						}
-
-						for (int i = 0; i < existingBlobIDs.size(); i++) {
-							boolean found = false;
-							for (int a = 0; a < blobinfo.size(); a++) {
-								if (blobinfo.get(a).getId() == existingBlobIDs
-										.get(i)) {
-									found = true;
-								}
-							}
-							if (!found) {
-								chatFrame.getPanel().remove(
-										((BlobView) blobViews.get(i))
-												.getJComponent());
-							}
-						}
-
-						for (int i = blobinfo.size() - 1; i >= 0; i--) {
-							BlobView currBlob = (BlobView) blobViews
-									.get(blobinfo.get(i).getId());
-							currBlob.update(blobinfo.get(i).getPosition(),
-									blobinfo.get(i).getDirection());
-						}
+						checkNewBlobs(blobinfo);
+						removeDeadBlobs(blobinfo);
+						updateBlobs(blobinfo);
 					}
 				}
 			}
 
+			private void updateBlobs(ArrayList<Blob> blobinfo) {
+				for (int i = 0; i < blobinfo.size(); i++) {
+					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getId()));
+					currBlob.update(blobinfo.get(i).getPosition(),
+							blobinfo.get(i).getDirection());
+				}
+			}
+
+			private void checkNewBlobs(ArrayList<Blob> blobinfo) {
+				for (int i = 0; i < blobinfo.size(); i++) {
+					if (!existingBlobIDs.contains(blobinfo.get(i))) {
+						existingBlobIDs.add((blobinfo.get(i)).getId());
+						BlobView newBlob = new BlobView(blobinfo.get(i).getId());
+						blobViews.add(newBlob);
+						chatFrame.getPanel().add(
+								newBlob.getJComponent());
+						chatFrame.getPanel().setComponentZOrder(
+								newBlob.getJComponent(), 0);
+					}
+				}
+			}
+			
+			private void removeDeadBlobs(ArrayList<Blob> blobinfo){
+				for(BlobView blobPointer : blobViews)
+				{
+					if(findBlob(blobinfo,blobPointer.getID()) == null)
+					{
+						chatFrame.getPanel().remove(blobPointer.getJComponent());
+					}
+				}
+			}
+
+			private BlobView findBlobView(ArrayList<Blob> blobinfo, int blobID){
+				for(BlobView blobPointer : blobViews)
+				{
+					if(blobPointer.getID() == blobID){
+						return blobPointer;
+					}
+				}
+				return null;
+			}
+			
+			private Blob findBlob(ArrayList<Blob> blobinfo, int blobID){
+				for(Blob blobPointer : blobinfo)
+				{
+					if(blobPointer.getId() == blobID){
+						return blobPointer;
+					}
+				}
+				return null;
+			}
+			
+			
 			public void disconnected(Connection connection) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {

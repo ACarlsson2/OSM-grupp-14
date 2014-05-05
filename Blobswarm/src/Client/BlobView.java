@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 public class BlobView {
 	//Fields
     public static final int SIZE = 50;
+    private int ID;
     
     BufferedImage image = null;
     
@@ -32,8 +33,8 @@ public class BlobView {
     File file4 = new File(path4);
 
     //Constructor
-    public BlobView() {
-        
+    public BlobView(int ID) {
+        this.ID = ID;
 
 		try {
 			image = ImageIO.read(file0);
@@ -77,5 +78,8 @@ public class BlobView {
 
     public JComponent getJComponent() {
         return this.comp;
+    }
+    public int getID(){
+    	return this.ID;
     }
 }
