@@ -1,6 +1,7 @@
 package Client;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,6 +11,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import Common.Blob;
 
 public class BlobView {
 	//Fields
@@ -50,10 +54,14 @@ public class BlobView {
 		
         this.comp.setBackground(Color.WHITE);
         this.comp.setOpaque(true);
+
+        styleBlobName();
+
     }
     
     //Methods
-    public void update(Point loc, int dir) {
+    public void update(Point loc, int dir) { 	
+   	
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
         nameLabel.setBounds(comp.getBounds().x, comp.getBounds().y-35, SIZE, SIZE);
         File tempfile;
@@ -80,6 +88,14 @@ public class BlobView {
         temp.setIcon(new ImageIcon(image));
     }
 
+	private void styleBlobName() {
+		//Styling of text above the blobs
+        Font styleText = new Font("Arial", Font.BOLD, 12);
+        nameLabel.setFont(styleText);
+        nameLabel.setForeground(Color.black);
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	}
+	
     public JComponent getJComponent() {
         return this.comp;
     }
@@ -90,4 +106,5 @@ public class BlobView {
     public int getID(){
     	return this.ID;
     }
+    
 }
