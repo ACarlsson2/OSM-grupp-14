@@ -128,6 +128,7 @@ public class Blobclient implements KeyListener {
 					if(findBlob(blobinfo,blobPointer.getID()) == null)
 					{
 						chatFrame.getPanel().remove(blobPointer.getJComponent());
+						chatFrame.getPanel().repaint();
 					}
 				}
 			}
@@ -259,7 +260,7 @@ public class Blobclient implements KeyListener {
 				background.setBackground(Color.WHITE);
 				background.setOpaque(true);
 				background.setBorder(BorderFactory
-						.createLineBorder(Color.WHITE));
+						.createLineBorder(Color.BLACK));
 				background.setBounds(0, 0, 600, 600);
 				panel.add(background);
 				contentPane.add(panel, "blob");
