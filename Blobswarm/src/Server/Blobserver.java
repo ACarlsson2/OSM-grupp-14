@@ -79,7 +79,7 @@ public class Blobserver {
 					if (name.length() == 0) return;
 					// Store the name on the connection.
 					connection.name = name;
-					connection.blob = new Blob();
+					connection.blob = new Blob(connection.name);
 					connection.blob.setId(blobIDs);
 					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.

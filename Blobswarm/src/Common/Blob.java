@@ -8,17 +8,28 @@ public class Blob {
 	private Point velocity;
 	private int id;
 	private int direction;
+	private String name;
 	
 	//Constructor
 	public Blob() { 
 		this.position = new Point(50,50);
 		this.id = 0;
 		this.direction = 0;
+		this.name = "";
 	}
-	public Blob(Point pos, int ID, int dir) { 
+	
+	public Blob(String name) { 
+		this.position = new Point(50,50);
+		this.id = 0;
+		this.direction = 0;
+		this.name = name;
+	}
+	
+	public Blob(Point pos, int ID, int dir, String name) { 
 		this.position = pos;
 		this.id = ID;
 		this.direction = dir;
+		this.name = name;
 	}
 	
 	//Methods
@@ -41,6 +52,9 @@ public class Blob {
 	
 	public int getId(){
 		return this.id;
+	}
+	public String getName(){
+		return this.name;
 	}
 	
 	public void setId(int id){

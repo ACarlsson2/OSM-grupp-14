@@ -19,6 +19,7 @@ public class BlobView {
     BufferedImage image = null;
     
     private JComponent comp;
+    private JLabel nameLabel;
     
     String path0 = "Blob0.png";
     String path1 = "Blob1.png";
@@ -33,8 +34,10 @@ public class BlobView {
     File file4 = new File(path4);
 
     //Constructor
-    public BlobView(int ID) {
+    public BlobView(int ID, String name) {
         this.ID = ID;
+        nameLabel = new JLabel("name");
+        nameLabel.setText(name);
 
 		try {
 			image = ImageIO.read(file0);
@@ -52,6 +55,7 @@ public class BlobView {
     //Methods
     public void update(Point loc, int dir) {
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
+        nameLabel.setBounds(comp.getBounds().x, comp.getBounds().y-35, SIZE, SIZE);
         File tempfile;
         switch(dir){
         case 0: tempfile = file0;
@@ -79,6 +83,10 @@ public class BlobView {
     public JComponent getJComponent() {
         return this.comp;
     }
+    public JLabel getNameLabel() {
+        return this.nameLabel;
+    }
+    
     public int getID(){
     	return this.ID;
     }

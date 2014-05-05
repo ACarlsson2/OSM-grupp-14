@@ -112,12 +112,16 @@ public class Blobclient implements KeyListener {
 				for (int i = 0; i < blobinfo.size(); i++) {
 					if (!existingBlobIDs.contains(blobinfo.get(i))) {
 						existingBlobIDs.add((blobinfo.get(i)).getId());
-						BlobView newBlob = new BlobView(blobinfo.get(i).getId());
+						BlobView newBlob = new BlobView(blobinfo.get(i).getId(),blobinfo.get(i).getName());
 						blobViews.add(newBlob);
 						chatFrame.getPanel().add(
 								newBlob.getJComponent());
+						chatFrame.getPanel().add(
+								newBlob.getNameLabel());
 						chatFrame.getPanel().setComponentZOrder(
 								newBlob.getJComponent(), 0);
+						chatFrame.getPanel().setComponentZOrder(
+								newBlob.getNameLabel(), 0);
 					}
 				}
 			}
@@ -128,6 +132,7 @@ public class Blobclient implements KeyListener {
 					if(findBlob(blobinfo,blobPointer.getID()) == null)
 					{
 						chatFrame.getPanel().remove(blobPointer.getJComponent());
+						chatFrame.getPanel().remove(blobPointer.getNameLabel());
 						chatFrame.getPanel().repaint();
 					}
 				}
