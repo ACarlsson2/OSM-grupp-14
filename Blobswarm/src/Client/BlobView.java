@@ -52,8 +52,8 @@ public class BlobView {
 		}
 
 		
-        this.comp.setBackground(Color.WHITE);
-        this.comp.setOpaque(true);
+        this.comp.setBackground(new Color(0,0,0,0));
+        this.comp.setOpaque(false);
 
         styleBlobName();
 
@@ -92,7 +92,7 @@ public class BlobView {
 		//Styling of text above the blobs
         Font styleText = new Font("Arial", Font.BOLD, 12);
         nameLabel.setFont(styleText);
-        nameLabel.setForeground(Color.black);
+        nameLabel.setForeground(Color.white);
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 	}
 	

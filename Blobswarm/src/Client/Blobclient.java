@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +26,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -267,6 +271,14 @@ public class Blobclient implements KeyListener {
 				background.setBorder(BorderFactory
 						.createLineBorder(Color.BLACK));
 				background.setBounds(0, 0, 600, 600);
+				ImageIcon image;
+				try {
+					image = new ImageIcon(ImageIO.read(new File("Background.png")));
+					background.setIcon(image);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				panel.add(background);
 				contentPane.add(panel, "blob");
 

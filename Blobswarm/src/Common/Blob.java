@@ -66,15 +66,19 @@ public class Blob {
 	private void updateLocation(int direction) {		
 		switch (direction) {
 		case 1:	//Upp
+			if(this.position.y >= 25)
 			this.position.y -= 10;
 		break;
 		case 2:	//Down
+			if(this.position.y <= 535)
 			this.position.y += 10;
 		break;
 		case 3:	//Left
+			if(this.position.x >= 25)
 			this.position.x -= 10;
 		break;
 		case 4:	//Right
+			if(this.position.x <= 550)
 			this.position.x += 10;
 		break;
 			default:
