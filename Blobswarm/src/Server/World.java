@@ -25,19 +25,19 @@ public class World {
 	 * @return true if moved false if not
 	 */
 	public synchronized boolean tryToMove(Blob blob, int direction){
-		Point testToMove = new Point(blob.getPosition());
+		Point tryNextPos = new Point(blob.getPosition());
 		switch (direction) {
 		case 1:	//Upp
-			testToMove.y -= blob.getMomentspeed();
+			tryNextPos.y -= blob.getMomentspeed();
 		break;
 		case 2:	//Down
-			testToMove.y += blob.getMomentspeed();
+			tryNextPos.y += blob.getMomentspeed();
 		break;
 		case 3:	//Left
-			testToMove.x -= blob.getMomentspeed();
+			tryNextPos.x -= blob.getMomentspeed();
 		break;
 		case 4:	//Right
-			testToMove.x += blob.getMomentspeed();
+			tryNextPos.x += blob.getMomentspeed();
 		break;
 			default:
 				return false; //Unknown
@@ -45,13 +45,12 @@ public class World {
 
 		for(int i = 0; i < players.length; i++){
 			if(!blob.equals(players[i])){
-				if(blob.insideBody(players[i].getPosition())){
-					System.out.println("HEJ FALSE");
+				if(blob.insideBody(tryNextPos, players[i])){
+					blob.setDirection(direction);
 					return false;
 				}					
 			}	
 		}
-		System.out.println("HEJ TRUE");
 		blob.move(direction);
 		return true;
 	}

@@ -11,7 +11,7 @@ public class Blob {
 	private int direction;
 	private String name;
 	private int momentspeed = 10;
-	private Size size; //To Change blobSize change this
+	private Size size = new Size(70,55); //To Change blobSize change this
 	
 	//Constructor
 	public Blob() { 
@@ -19,7 +19,6 @@ public class Blob {
 		this.id = 0;
 		this.direction = 0;
 		this.name = "";
-		this.size = new Size(45,37);
 	}
 	
 	public Blob(String name) { 
@@ -27,7 +26,6 @@ public class Blob {
 		this.id = 0;
 		this.direction = 0;
 		this.name = name;
-		this.size = new Size(45,37);
 	}
 	
 	public Blob(Point pos, int ID, int dir, String name) { 
@@ -35,7 +33,6 @@ public class Blob {
 		this.id = ID;
 		this.direction = dir;
 		this.name = name;
-		this.size = new Size(45,37);
 	}
 	
 	//Methods
@@ -43,12 +40,17 @@ public class Blob {
 			this.direction = direction;
 			updateLocation(direction);
 	}
-	
-	public boolean insideBody(Point pos){
+	/**
+	 * Check if pos exist inside a blob
+	 * @param pos 
+	 * @param blob
+	 * @return
+	 */
+	public boolean insideBody(Point pos, Blob blob){
 		double width = pos.getX();
 		double higth = pos.getY();
-		if((this.position.getX() <= width) && (this.position.getX()+size.getWidth()) >= width) {
-			if((this.position.getY() <= higth) && (this.position.getY()+size.getHight()) >= higth) {
+		if(((blob.position.getX()-(size.getWidth()/2)) <= width) && ((blob.position.getX()+(size.getWidth()/2))) >= width) {
+			if(((blob.position.getY()-(size.getHight()/2)) <= higth) && ((blob.position.getY()+(size.getHight()/2))) >= higth) {
 				return true;
 			}
 		}	
@@ -84,6 +86,10 @@ public class Blob {
 	
 	public Size getSize(){
 		return this.size;
+	}
+	
+	public void setDirection(int number){
+		this.direction = number;
 	}
 	
 
