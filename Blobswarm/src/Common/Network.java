@@ -27,6 +27,7 @@ public class Network {
 		kryo.register(ServerInput.class);
 		kryo.register(java.util.HashSet.class);
 		kryo.register(Character.class);
+		kryo.register(Common.Size.class);
 	}
 
 	static public class RegisterName {

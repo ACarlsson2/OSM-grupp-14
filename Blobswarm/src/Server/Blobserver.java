@@ -28,9 +28,11 @@ public class Blobserver {
 	Server server;
 	int blobIDs = 0;
 	int FPS = 30;
+	World world;
 	
 
 	public Blobserver () throws IOException {
+		this.world = new World();
 		server = new Server() {
 			protected Connection newConnection () {
 				// By providing our own connection implementation, we can store per
@@ -53,16 +55,16 @@ public class Blobserver {
 					Character input = ((ServerInput)object).input;		
 						switch(input){
 						case 'w':				// Do this if the input is the up button.
-							connection.blob.move(1);
+							world.tryToMove(connection.blob, 1);
 							break;
 						case 's':               // Do this if the input is the down button.
-							connection.blob.move(2);
+							world.tryToMove(connection.blob, 2);
 							break;
 						case 'a':               // Do this if the input is the left button.
-							connection.blob.move(3);
+							world.tryToMove(connection.blob, 3);
 							break;
 						case 'd':               // Do this if the input is the right button.
-							connection.blob.move(4);
+							world.tryToMove(connection.blob, 4);
 							break;
 						}					
 					return;
@@ -133,12 +135,16 @@ public class Blobserver {
 	}
 
 	void updateNames () {
+		//x marked comments to update something every players pos.
 		// Collect the names for each connection.
 		Connection[] connections = server.getConnections();
-		ArrayList names = new ArrayList(connections.length);
+		int totalConnections = connections.length; //x
+		ArrayList names = new ArrayList(totalConnections);//x
+		world.setPlayers(new Blob[totalConnections]);//x
 		for (int i = connections.length - 1; i >= 0; i--) {
 			ChatConnection connection = (ChatConnection)connections[i];
 			names.add(connection.name);
+			world.getPlayers()[i] = connection.blob;//x
 		}
 		// Send the names to everyone.
 		UpdateNames updateNames = new UpdateNames();
