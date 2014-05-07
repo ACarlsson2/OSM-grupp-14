@@ -41,10 +41,12 @@ import Common.Blob;
 import Common.Network;
 import Common.Network.Blobs;
 import Common.Network.ChatMessage;
+import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
-import Server.Blobserver.ChatConnection;
+import Server.Blobserver.BlobConnection;
+import Server.NPBlob;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -127,6 +129,10 @@ public class Blobclient implements KeyListener {
 									blobinfo.get(i).getDirection());
 						}
 					}
+				}
+				
+				if (object instanceof NPBlobs) {
+					
 				}
 			}
 

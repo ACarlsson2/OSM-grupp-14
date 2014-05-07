@@ -1,18 +1,36 @@
 package Server;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import Common.Blob;
 
-public class NPBlob extends Blob {
+/**
+ * 
+ * 						NPBlob
+ *
+ *
+ */
+public class NPBlob extends Blob implements Runnable{
 	
-		
-	private Point separation(NPBlob[] npblobs){
+	private ArrayList<NPBlob> npblobs;
+	
+	public NPBlob(ArrayList<NPBlob> npblobs){
+		this.npblobs = npblobs;
+	}
+	
+	/**
+	 * Calculates a point to steer such that the separation of the npb's are kept and
+	 * they do not get arbitrarily close.  
+	 * @param npblobs - neighbours of this blob
+	 * @return A target point.
+	 */
+	private Point separation(){
 		Point c = new Point(0,0);
 		
-		for (Blob blob : npblobs) {
+		for (NPBlob blob : npblobs) {
 			if (!blob.equals(this)) {
-				
 				if (blob.getPosition().distance(this.getPosition()) <= 100) {
 					double newX = c.getX() - (blob.getPosition().getX() - this.getPosition().getX());
 					double newY = c.getY() - (blob.getPosition().getY() - this.getPosition().getY());
@@ -23,7 +41,11 @@ public class NPBlob extends Blob {
 		return c;
 	}
 	
-	private Point alignment(NPBlob[] npblobs){
+	/**
+	 * Scales the velocity such that NBP's try to align their directions
+	 * @return
+	 */
+	private Point alignment(){
 		
 		double vx = 0;
 		double vy = 0;
@@ -34,7 +56,7 @@ public class NPBlob extends Blob {
 				vy += b.getVelocity().y;
 			}
 		}
-		int N = npblobs.length;
+		int N = npblobs.size();
 		
 		if (N > 0) {
 			vx = vx/(N-1);
@@ -45,7 +67,12 @@ public class NPBlob extends Blob {
 		return pv;
 	}
 	
-	private Point cohesion(NPBlob[] npblobs){
+	
+	/**
+	 * NPB's try to stay close to their immediate neighbors.
+	 * @return a point to steer towards.
+	 */
+	private Point cohesion(){
 		double x = 0;
 		double y = 0;
 		
@@ -58,9 +85,9 @@ public class NPBlob extends Blob {
 				 y = y + bpos.y;
 			}
 		}
-		if (npblobs.length > 0) {
-			x = x / (npblobs.length - 1);
-			y = y / (npblobs.length - 1);
+		if (npblobs.size() > 0) {
+			x = x / (npblobs.size() - 1);
+			y = y / (npblobs.size() - 1);
 		}
 		
 		Point pc = new Point();
@@ -69,10 +96,10 @@ public class NPBlob extends Blob {
 	}
 	
 	 
-	private void updateNPBPositions(NPBlob[] npblobs) {
-		Point v1 = separation(npblobs);
-		Point v2 = cohesion(npblobs);
-		Point v3 = alignment(npblobs);
+	private synchronized void updateNPBPositions() {
+		Point v1 = separation();
+		Point v2 = cohesion();
+		Point v3 = alignment();
 		Point pos = this.getPosition();
 		Point vel = this.getVelocity();
 		double vx = vel.getX() + v1.getX() + v2.getX() + v3.getX();
@@ -85,5 +112,20 @@ public class NPBlob extends Blob {
 		this.getVelocity().setLocation(vx, vy);
 	}
 	
-	
+	@Override
+	public void move(int direction) {
+		updateNPBPositions();
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				move(0);
+				Thread.sleep(1000/30); // 30 FPS
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

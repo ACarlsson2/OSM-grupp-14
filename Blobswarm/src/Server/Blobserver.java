@@ -6,6 +6,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -15,6 +18,7 @@ import Common.Blob;
 import Common.Network;
 import Common.Network.Blobs;
 import Common.Network.ChatMessage;
+import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
@@ -29,13 +33,14 @@ public class Blobserver {
 	int blobIDs = 0;
 	int FPS = 30;
 	
-
+	List<NPBlob> npblobs = Collections.synchronizedList(new ArrayList<NPBlob>());
+	
 	public Blobserver () throws IOException {
 		server = new Server() {
 			protected Connection newConnection () {
 				// By providing our own connection implementation, we can store per
 				// connection state without a connection ID to state look up.
-				return new ChatConnection();
+				return new BlobConnection();
 			}
 		};
 
@@ -46,7 +51,7 @@ public class Blobserver {
 		server.addListener(new Listener() {
 			public void received (Connection c, Object object) {
 				// We know all connections for this server are actually ChatConnections.
-				ChatConnection connection = (ChatConnection)c;
+				BlobConnection connection = (BlobConnection)c;
 
 				if (object instanceof ServerInput) {
 					if (connection.name == null) return;
@@ -115,13 +120,17 @@ public class Blobserver {
 			Connection[] connections = server.getConnections();
 			ArrayList blobs = new ArrayList(connections.length);
 			for (int i = connections.length - 1; i >= 0; i--) {
-				ChatConnection connection = (ChatConnection)connections[i];
+				BlobConnection connection = (BlobConnection)connections[i];
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
 			Blobs blobArray = new Blobs();
 			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
+			
+			
+			
 			server.sendToAllTCP(blobArray);
+			server.sendToAllTCP(npblobs);
 			try {
 				Thread.sleep(1000/FPS);
 			} catch (InterruptedException e) {
@@ -137,7 +146,7 @@ public class Blobserver {
 		Connection[] connections = server.getConnections();
 		ArrayList names = new ArrayList(connections.length);
 		for (int i = connections.length - 1; i >= 0; i--) {
-			ChatConnection connection = (ChatConnection)connections[i];
+			BlobConnection connection = (BlobConnection)connections[i];
 			names.add(connection.name);
 		}
 		// Send the names to everyone.
@@ -147,7 +156,7 @@ public class Blobserver {
 	}
 
 	// This holds per connection state.
-	public static class ChatConnection extends Connection {
+	public static class BlobConnection extends Connection {
 		public String name;
 		public Blob blob;
 	}

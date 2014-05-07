@@ -5,9 +5,11 @@ import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
+import Server.NPBlob;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 // This class is a convenient place to keep things common to both the client and server.
 public class Network {
@@ -27,6 +29,9 @@ public class Network {
 		kryo.register(ServerInput.class);
 		kryo.register(java.util.HashSet.class);
 		kryo.register(Character.class);
+		kryo.register(NPBlobs.class);
+		kryo.register(NPBlob.class);
+		
 	}
 
 	static public class RegisterName {
@@ -43,6 +48,11 @@ public class Network {
 	static public class Blobs {
 		public Blob[] blobs;
 	}
+	
+	static public class NPBlobs{
+		public List npblobs;
+	}
+	
 	static public class ServerInput {
 		public Character input;
 	}
