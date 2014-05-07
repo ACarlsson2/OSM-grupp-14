@@ -127,6 +127,7 @@ public class Blobclient implements KeyListener {
 								newBlob.getJComponent(), 0);
 						chatFrame.getPanel().setComponentZOrder(
 								newBlob.getNameLabel(), 0);
+						
 					}
 				}
 			}
@@ -246,6 +247,7 @@ public class Blobclient implements KeyListener {
 		JLabel backgroundLabel;
 		ImageIcon[] BGimages;
 		int BGimage = 0;
+		int animateQueue = 0;
 
 		public ChatFrame(String host) {
 			super("Blobswarm");
@@ -307,8 +309,11 @@ public class Blobclient implements KeyListener {
 		}
 
 		public void animate(){
-			if(BGimage>=BGimages.length)BGimage=0;
-				backgroundLabel.setIcon(BGimages[BGimage++]);
+			if(animateQueue>=(BGimages.length-1)*10)animateQueue=0;
+			animateQueue++;
+			if(animateQueue % 10 == 0)
+				backgroundLabel.setIcon(BGimages[animateQueue / 10]);
+				getPanel().repaint();
 		}
 		
 		public void setNames(final String[] names) {
