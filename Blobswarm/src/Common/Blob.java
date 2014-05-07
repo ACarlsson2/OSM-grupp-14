@@ -1,17 +1,9 @@
 package Common;
 
 import java.awt.Point;
-import java.awt.geom.Dimension2D;
 
 public class Blob {
 	//Fields
-	private int borderLeft = 25;
-	private int borderRight = 575;
-	private int borderBotton = 555;
-	private int borderTop = 25;
-	private Dimension2D blobSize;
-	
-	
 	private Point position;
 	private Point velocity;
 	private int id;
@@ -24,7 +16,6 @@ public class Blob {
 		this.id = 0;
 		this.direction = 0;
 		this.name = "";
-		blobSize.setSize(45,37);
 	}
 	
 	public Blob(String name) { 
@@ -32,28 +23,19 @@ public class Blob {
 		this.id = 0;
 		this.direction = 0;
 		this.name = name;
-		blobSize.setSize(45,37);
 	}
 	
-	public Blob(Point pos, int ID, int dir, String name, Dimension2D blobSize) { 
+	public Blob(Point pos, int ID, int dir, String name) { 
 		this.position = pos;
 		this.id = ID;
 		this.direction = dir;
 		this.name = name;
-		this.blobSize = blobSize;
 	}
 	
 	//Methods
 	public void move(int direction){
 			this.direction = direction;
 			updateLocation(direction);
-	}
-	
-	public boolean canItMove(int direction, Blob blob){ //TODO linked list for server? with all blobs to check dimensions
-		if(true){
-			return true;
-		}
-		return false;
 	}
 	
 	public Point getPosition(){
@@ -84,19 +66,19 @@ public class Blob {
 	private void updateLocation(int direction) {		
 		switch (direction) {
 		case 1:	//Upp
-			if(this.position.y >= borderTop)							
+			if(this.position.y >= 25)
 			this.position.y -= 10;
 		break;
 		case 2:	//Down
-			if(this.position.y <= borderBotton)
+			if(this.position.y <= 535)
 			this.position.y += 10;
 		break;
 		case 3:	//Left
-			if(this.position.x >= borderLeft)
+			if(this.position.x >= 25)
 			this.position.x -= 10;
 		break;
 		case 4:	//Right
-			if(this.position.x <= borderRight)
+			if(this.position.x <= 550)
 			this.position.x += 10;
 		break;
 			default:

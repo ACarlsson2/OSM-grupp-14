@@ -97,6 +97,7 @@ public class Blobclient implements KeyListener {
 
 					if (blobinfo.size() > 0) {
 
+						chatFrame.animate();
 						checkNewBlobs(blobinfo);
 						removeDeadBlobs(blobinfo);
 						updateBlobs(blobinfo);
@@ -242,6 +243,9 @@ public class Blobclient implements KeyListener {
 		CardLayout cardLayout;
 		JProgressBar progressBar;
 		JPanel thePanel;
+		JLabel backgroundLabel;
+		ImageIcon[] BGimages;
+		int BGimage = 0;
 
 		public ChatFrame(String host) {
 			super("Blobswarm");
@@ -265,7 +269,9 @@ public class Blobclient implements KeyListener {
 			{
 				JPanel panel = new JPanel(new BorderLayout());
 				thePanel = panel;
+				BGimages = new ImageIcon[3];
 				JLabel background = new JLabel("");
+				backgroundLabel = background;
 				background.setBackground(Color.WHITE);
 				background.setOpaque(true);
 				background.setBorder(BorderFactory
@@ -273,8 +279,10 @@ public class Blobclient implements KeyListener {
 				background.setBounds(0, 0, 600, 600);
 				ImageIcon image;
 				try {
-					image = new ImageIcon(ImageIO.read(new File("Background.png")));
-					background.setIcon(image);
+					BGimages[0] = new ImageIcon(ImageIO.read(new File("Background0.png")));
+					BGimages[1] = new ImageIcon(ImageIO.read(new File("Background1.png")));
+					BGimages[2] = new ImageIcon(ImageIO.read(new File("Background2.png")));
+					background.setIcon(BGimages[BGimage]);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -298,6 +306,11 @@ public class Blobclient implements KeyListener {
 			return thePanel;
 		}
 
+		public void animate(){
+			if(BGimage>=BGimages.length)BGimage=0;
+				backgroundLabel.setIcon(BGimages[BGimage++]);
+		}
+		
 		public void setNames(final String[] names) {
 			// This listener is run on the client's update thread, which was
 			// started by client.start().
