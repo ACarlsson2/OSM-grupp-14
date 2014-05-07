@@ -50,23 +50,19 @@ public class Blobserver {
 
 				if (object instanceof ServerInput) {
 					if (connection.name == null) return;
-					Character input = ((ServerInput)object).input;		
-						switch(input){
-						case 'w':				// Do this if the input is the up button.
+					ServerInput input = ((ServerInput)object);		
+					if (input.up)
 							world.attemptMove(connection.blob, 1);
-							break;
-						case 's':               // Do this if the input is the down button.
+					if (input.down)             // Do this if the input is the down button.
 							world.attemptMove(connection.blob, 2);
-							break;
-						case 'a':               // Do this if the input is the left button.
+					if (input.left)            // Do this if the input is the left button.
 							world.attemptMove(connection.blob, 3);
-							break;
-						case 'd':               // Do this if the input is the right button.
+					if (input.right)         // Do this if the input is the right button.
 							world.attemptMove(connection.blob, 4);
-							break;
-						}					
+											
 					return;
-				}
+					}
+				
 				
 				if (object instanceof RegisterName) {
 					// Ignore the object if a client has already registered a name. This is

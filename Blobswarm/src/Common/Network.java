@@ -2,7 +2,6 @@
 package Common;
 
 import java.awt.Point;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -24,6 +23,7 @@ public class Network {
 		kryo.register(ServerInput.class);
 		kryo.register(java.util.HashSet.class);
 		kryo.register(Character.class);
+		kryo.register(boolean.class);
 		kryo.register(Common.Size.class);
 	}
 
@@ -42,6 +42,9 @@ public class Network {
 		public Blob[] blobs;
 	}
 	static public class ServerInput {
-		public Character input;
+		public boolean up = false;
+		public boolean down = false;
+		public boolean left = false;
+		public boolean right = false;
 	}
 }

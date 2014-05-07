@@ -43,6 +43,7 @@ public class Blobclient implements KeyListener {
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
 	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
+	ServerInput output = new ServerInput();
 
 	// Constructor
 	public Blobclient() {
@@ -77,11 +78,12 @@ public class Blobclient implements KeyListener {
 					}
 
 					if (blobinfo.size() > 0) {
-
 						chatFrame.animate();
 						checkNewBlobs(blobinfo);
 						removeDeadBlobs(blobinfo);
 						updateBlobs(blobinfo);
+						
+						client.sendTCP(output);
 					}
 				}
 			}
@@ -208,10 +210,10 @@ public class Blobclient implements KeyListener {
 	
 	//Methods
 	public void keyPressed(KeyEvent e) {
-		ServerInput key = new ServerInput();
-		key.input = e.getKeyChar();
-		client.sendTCP(key);
-
+		if(e.getKeyChar()=='w')output.up = true;
+		if(e.getKeyChar()=='s')output.down = true;
+		if(e.getKeyChar()=='a')output.left = true;
+		if(e.getKeyChar()=='d')output.right = true;
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -219,6 +221,10 @@ public class Blobclient implements KeyListener {
 	}
 
 	public void keyReleased(KeyEvent e) {
+		if(e.getKeyChar()=='w')output.up = false;
+		if(e.getKeyChar()=='s')output.down = false;
+		if(e.getKeyChar()=='a')output.left = false;
+		if(e.getKeyChar()=='d')output.right = false;
 	}
 
 	static private class ChatFrame extends JFrame {
