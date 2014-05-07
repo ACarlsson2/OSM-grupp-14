@@ -247,7 +247,7 @@ public class Blobclient implements KeyListener {
 		JLabel backgroundLabel;
 		ImageIcon[] BGimages;
 		int BGimage = 0;
-		int animateQueue = 0;
+		int animateQueue = 1;
 
 		public ChatFrame(String host) {
 			super("Blobswarm");
@@ -309,12 +309,15 @@ public class Blobclient implements KeyListener {
 		}
 
 		public void animate(){
-			if(animateQueue>=(BGimages.length-1)*10)animateQueue=0;
-			animateQueue++;
-			if(animateQueue % 10 == 0)
-				backgroundLabel.setIcon(BGimages[animateQueue / 10]);
-				getPanel().repaint();
-		}
+			   if(animateQueue > (BGimages.length)*10) {
+				   animateQueue = 1;
+			   }
+			   if(animateQueue % 10 == 0){
+			    backgroundLabel.setIcon(BGimages[(animateQueue / 10)-1]);
+			   }
+			    getPanel().repaint();
+			    animateQueue++;   
+			  }
 		
 		public void setNames(final String[] names) {
 			// This listener is run on the client's update thread, which was
