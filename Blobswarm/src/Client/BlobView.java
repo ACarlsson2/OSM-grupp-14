@@ -1,6 +1,7 @@
 package Client;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,14 +11,19 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import Common.Blob;
 
 public class BlobView {
 	//Fields
     public static final int SIZE = 50;
+    private int ID;
     
     BufferedImage image = null;
     
     private JComponent comp;
+    private JLabel nameLabel;
     
     String path0 = "Blob0.png";
     String path1 = "Blob1.png";
@@ -32,8 +38,10 @@ public class BlobView {
     File file4 = new File(path4);
 
     //Constructor
-    public BlobView() {
-        
+    public BlobView(int ID, String name) {
+        this.ID = ID;
+        nameLabel = new JLabel("name");
+        nameLabel.setText(name);
 
 		try {
 			image = ImageIO.read(file0);
@@ -44,13 +52,18 @@ public class BlobView {
 		}
 
 		
-        this.comp.setBackground(Color.WHITE);
-        this.comp.setOpaque(true);
+        this.comp.setBackground(new Color(0,0,0,0));
+        this.comp.setOpaque(false);
+
+        styleBlobName();
+
     }
     
     //Methods
-    public void update(Point loc, int dir) {
+    public void update(Point loc, int dir) { 	
+   	
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
+        nameLabel.setBounds(comp.getBounds().x, comp.getBounds().y-35, SIZE, SIZE);
         File tempfile;
         switch(dir){
         case 0: tempfile = file0;
@@ -75,7 +88,23 @@ public class BlobView {
         temp.setIcon(new ImageIcon(image));
     }
 
+	private void styleBlobName() {
+		//Styling of text above the blobs
+        Font styleText = new Font("Arial", Font.BOLD, 12);
+        nameLabel.setFont(styleText);
+        nameLabel.setForeground(Color.white);
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	}
+	
     public JComponent getJComponent() {
         return this.comp;
     }
+    public JLabel getNameLabel() {
+        return this.nameLabel;
+    }
+    
+    public int getID(){
+    	return this.ID;
+    }
+    
 }

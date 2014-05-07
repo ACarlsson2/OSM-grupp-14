@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +26,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -89,45 +93,15 @@ public class Blobclient implements KeyListener {
 					ArrayList<Blob> blobinfo = new ArrayList<Blob>(
 							blobArray.blobs.length);
 
-					for (int i = blobArray.blobs.length - 1; i >= 0; i--) {
+					for (int i = 0; i < blobArray.blobs.length; i++) {
 						blobinfo.add(blobArray.blobs[i]);
 					}
 
 					if (blobinfo.size() > 0) {
 
-						for (int i = blobinfo.size() - 1; i >= 0; i--) {
-							if (!existingBlobIDs.contains(blobinfo.get(i))) {
-								existingBlobIDs.add((blobinfo.get(i)).getId());
-								BlobView newBlob = new BlobView();
-								blobViews.add(newBlob);
-								chatFrame.getPanel().add(
-										newBlob.getJComponent());
-								chatFrame.getPanel().setComponentZOrder(
-										newBlob.getJComponent(), 0);
-							}
-						}
-
-						for (int i = 0; i < existingBlobIDs.size(); i++) {
-							boolean found = false;
-							for (int a = 0; a < blobinfo.size(); a++) {
-								if (blobinfo.get(a).getId() == existingBlobIDs
-										.get(i)) {
-									found = true;
-								}
-							}
-							if (!found) {
-								chatFrame.getPanel().remove(
-										((BlobView) blobViews.get(i))
-												.getJComponent());
-							}
-						}
-
-						for (int i = blobinfo.size() - 1; i >= 0; i--) {
-							BlobView currBlob = (BlobView) blobViews
-									.get(blobinfo.get(i).getId());
-							currBlob.update(blobinfo.get(i).getPosition(),
-									blobinfo.get(i).getDirection());
-						}
+						checkNewBlobs(blobinfo);
+						removeDeadBlobs(blobinfo);
+						updateBlobs(blobinfo);
 					}
 				}
 				
@@ -136,6 +110,65 @@ public class Blobclient implements KeyListener {
 				}
 			}
 
+			private void updateBlobs(ArrayList<Blob> blobinfo) {
+				for (int i = 0; i < blobinfo.size(); i++) {
+					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getId()));
+					currBlob.update(blobinfo.get(i).getPosition(),
+							blobinfo.get(i).getDirection());
+				}
+			}
+
+			private void checkNewBlobs(ArrayList<Blob> blobinfo) {
+				for (int i = 0; i < blobinfo.size(); i++) {
+					if (!existingBlobIDs.contains(blobinfo.get(i))) {
+						existingBlobIDs.add((blobinfo.get(i)).getId());
+						BlobView newBlob = new BlobView(blobinfo.get(i).getId(),blobinfo.get(i).getName());
+						blobViews.add(newBlob);
+						chatFrame.getPanel().add(
+								newBlob.getJComponent());
+						chatFrame.getPanel().add(
+								newBlob.getNameLabel());
+						chatFrame.getPanel().setComponentZOrder(
+								newBlob.getJComponent(), 0);
+						chatFrame.getPanel().setComponentZOrder(
+								newBlob.getNameLabel(), 0);
+					}
+				}
+			}
+			
+			private void removeDeadBlobs(ArrayList<Blob> blobinfo){
+				for(BlobView blobPointer : blobViews)
+				{
+					if(findBlob(blobinfo,blobPointer.getID()) == null)
+					{
+						chatFrame.getPanel().remove(blobPointer.getJComponent());
+						chatFrame.getPanel().remove(blobPointer.getNameLabel());
+						chatFrame.getPanel().repaint();
+					}
+				}
+			}
+
+			private BlobView findBlobView(ArrayList<Blob> blobinfo, int blobID){
+				for(BlobView blobPointer : blobViews)
+				{
+					if(blobPointer.getID() == blobID){
+						return blobPointer;
+					}
+				}
+				return null;
+			}
+			
+			private Blob findBlob(ArrayList<Blob> blobinfo, int blobID){
+				for(Blob blobPointer : blobinfo)
+				{
+					if(blobPointer.getId() == blobID){
+						return blobPointer;
+					}
+				}
+				return null;
+			}
+			
+			
 			public void disconnected(Connection connection) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
@@ -242,8 +275,16 @@ public class Blobclient implements KeyListener {
 				background.setBackground(Color.WHITE);
 				background.setOpaque(true);
 				background.setBorder(BorderFactory
-						.createLineBorder(Color.WHITE));
+						.createLineBorder(Color.BLACK));
 				background.setBounds(0, 0, 600, 600);
+				ImageIcon image;
+				try {
+					image = new ImageIcon(ImageIO.read(new File("Background.png")));
+					background.setIcon(image);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				panel.add(background);
 				contentPane.add(panel, "blob");
 

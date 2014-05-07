@@ -84,7 +84,7 @@ public class Blobserver {
 					if (name.length() == 0) return;
 					// Store the name on the connection.
 					connection.name = name;
-					connection.blob = new Blob();
+					connection.blob = new Blob(connection.name);
 					connection.blob.setId(blobIDs);
 					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.
@@ -119,8 +119,10 @@ public class Blobserver {
 			
 			Connection[] connections = server.getConnections();
 			ArrayList blobs = new ArrayList(connections.length);
+			
 			for (int i = connections.length - 1; i >= 0; i--) {
 				BlobConnection connection = (BlobConnection)connections[i];
+
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
