@@ -1,12 +1,10 @@
 
 package Server;
 
-import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,16 +53,16 @@ public class Blobserver {
 					Character input = ((ServerInput)object).input;		
 						switch(input){
 						case 'w':				// Do this if the input is the up button.
-							world.tryToMove(connection.blob, 1);
+							world.attemptMove(connection.blob, 1);
 							break;
 						case 's':               // Do this if the input is the down button.
-							world.tryToMove(connection.blob, 2);
+							world.attemptMove(connection.blob, 2);
 							break;
 						case 'a':               // Do this if the input is the left button.
-							world.tryToMove(connection.blob, 3);
+							world.attemptMove(connection.blob, 3);
 							break;
 						case 'd':               // Do this if the input is the right button.
-							world.tryToMove(connection.blob, 4);
+							world.attemptMove(connection.blob, 4);
 							break;
 						}					
 					return;
@@ -82,7 +80,7 @@ public class Blobserver {
 					// Store the name on the connection.
 					connection.name = name;
 					connection.blob = new Blob(connection.name);
-					connection.blob.setId(blobIDs);
+					connection.blob.setID(blobIDs);
 					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.
 					ChatMessage chatMessage = new ChatMessage();
@@ -115,7 +113,7 @@ public class Blobserver {
 		while(true){
 			
 			Connection[] connections = server.getConnections();
-			ArrayList blobs = new ArrayList(connections.length);
+			ArrayList<Blob> blobs = new ArrayList<Blob>(connections.length);
 			for (int i = 0; i < connections.length; i++) {
 				ChatConnection connection = (ChatConnection)connections[i];
 				if (connection.name == null) continue;
@@ -139,7 +137,7 @@ public class Blobserver {
 		// Collect the names for each connection.
 		Connection[] connections = server.getConnections();
 		int totalConnections = connections.length; //x
-		ArrayList names = new ArrayList(totalConnections);//x
+		ArrayList<String> names = new ArrayList<String>(totalConnections);//x
 		world.setPlayers(new Blob[totalConnections]);//x
 		for (int i = connections.length - 1; i >= 0; i--) {
 			ChatConnection connection = (ChatConnection)connections[i];

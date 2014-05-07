@@ -3,7 +3,7 @@ package Common;
 public class Size {
 	//Fields
 	private double width;  
-	private double hight;
+	private double height;
 	
 	//Constructors
 	public Size(){
@@ -11,20 +11,20 @@ public class Size {
 	
 	public Size(double width, double hight) {
 		this.width = width;
-		this.hight = hight;	
+		this.height = hight;	
 	}
 	
 	//Methods
-	public double getHight(){
-		return this.hight;
+	public double getHeight(){
+		return this.height;
 	}
 	
 	public double getWidth(){
 		return this.width;
 	}
 	
-	public void setHight(int hight){
-		this.hight = hight;
+	public void setHeight(int hight){
+		this.height = hight;
 	}
 	
 	public void setWidth(int width){

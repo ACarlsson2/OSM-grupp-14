@@ -7,30 +7,30 @@ public class Blob {
 	//Fields
 	private Point position;
 	private Point velocity;
-	private int id;
+	private int ID;
 	private int direction;
 	private String name;
-	private int momentspeed = 10;
+	private int speed = 10;
 	private Size size = new Size(70,55); //To Change blobSize change this
 	
 	//Constructor
 	public Blob() { 
 		this.position = new Point(50,50);
-		this.id = 0;
+		this.ID = 0;
 		this.direction = 0;
 		this.name = "";
 	}
 	
 	public Blob(String name) { 
 		this.position = new Point(50,50);
-		this.id = 0;
+		this.ID = 0;
 		this.direction = 0;
 		this.name = name;
 	}
 	
 	public Blob(Point pos, int ID, int dir, String name) { 
 		this.position = pos;
-		this.id = ID;
+		this.ID = ID;
 		this.direction = dir;
 		this.name = name;
 	}
@@ -46,11 +46,11 @@ public class Blob {
 	 * @param blob
 	 * @return
 	 */
-	public boolean insideBody(Point pos, Blob blob){
+	public boolean contains(Point pos, Blob blob){
 		double width = pos.getX();
-		double higth = pos.getY();
+		double height = pos.getY();
 		if(((blob.position.getX()-(size.getWidth()/2)) <= width) && ((blob.position.getX()+(size.getWidth()/2))) >= width) {
-			if(((blob.position.getY()-(size.getHight()/2)) <= higth) && ((blob.position.getY()+(size.getHight()/2))) >= higth) {
+			if(((blob.position.getY()-(size.getHeight()/2)) <= height) && ((blob.position.getY()+(size.getHeight()/2))) >= height) {
 				return true;
 			}
 		}	
@@ -69,19 +69,19 @@ public class Blob {
 		return velocity;
 	}
 	
-	public int getId(){
-		return this.id;
+	public int getID(){
+		return this.ID;
 	}
 	public String getName(){
 		return this.name;
 	}
 	
-	public void setId(int id){
-		this.id = id;
+	public void setID(int id){
+		this.ID = id;
 	}
 	
-	public int getMomentspeed(){
-		return momentspeed;
+	public int getSpeed(){
+		return speed;
 	}
 	
 	public Size getSize(){
@@ -98,19 +98,19 @@ public class Blob {
 		switch (direction) {
 		case 1:	//Upp
 			if(this.position.y >= 25)
-			this.position.y -= momentspeed;
+			this.position.y -= speed;
 		break;
 		case 2:	//Down
 			if(this.position.y <= 535)
-			this.position.y += momentspeed;
+			this.position.y += speed;
 		break;
 		case 3:	//Left
 			if(this.position.x >= 25)
-			this.position.x -= momentspeed;
+			this.position.x -= speed;
 		break;
 		case 4:	//Right
 			if(this.position.x <= 550)
-			this.position.x += momentspeed;
+			this.position.x += speed;
 		break;
 			default:
 			return;

@@ -5,50 +5,31 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import Common.Blob;
 import Common.Network;
 import Common.Network.Blobs;
-import Common.Network.ChatMessage;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
-import Server.Blobserver.ChatConnection;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -107,7 +88,7 @@ public class Blobclient implements KeyListener {
 
 			private void updateBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {
-					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getId()));
+					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getID()));
 					currBlob.update(blobinfo.get(i).getPosition(),
 							blobinfo.get(i).getDirection());
 				}
@@ -116,8 +97,8 @@ public class Blobclient implements KeyListener {
 			private void checkNewBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {
 					if (!existingBlobIDs.contains(blobinfo.get(i))) {
-						existingBlobIDs.add((blobinfo.get(i)).getId());
-						BlobView newBlob = new BlobView(blobinfo.get(i).getId(),blobinfo.get(i).getName());
+						existingBlobIDs.add((blobinfo.get(i)).getID());
+						BlobView newBlob = new BlobView(blobinfo.get(i).getID(),blobinfo.get(i).getName());
 						blobViews.add(newBlob);
 						chatFrame.getPanel().add(
 								newBlob.getJComponent());
@@ -157,7 +138,7 @@ public class Blobclient implements KeyListener {
 			private Blob findBlob(ArrayList<Blob> blobinfo, int blobID){
 				for(Blob blobPointer : blobinfo)
 				{
-					if(blobPointer.getId() == blobID){
+					if(blobPointer.getID() == blobID){
 						return blobPointer;
 					}
 				}
@@ -279,7 +260,6 @@ public class Blobclient implements KeyListener {
 				background.setBorder(BorderFactory
 						.createLineBorder(Color.BLACK));
 				background.setBounds(0, 0, 600, 600);
-				ImageIcon image;
 				try {
 					BGimages[0] = new ImageIcon(ImageIO.read(new File("Background0.png")));
 					BGimages[1] = new ImageIcon(ImageIO.read(new File("Background1.png")));

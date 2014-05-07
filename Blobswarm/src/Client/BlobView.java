@@ -13,8 +13,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import Common.Blob;
-
 public class BlobView {
 	//Fields
     public static final int SIZE = 50;
