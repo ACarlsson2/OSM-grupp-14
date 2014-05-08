@@ -2,14 +2,15 @@
 package Common;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import Server.NPBlob;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 // This class is a convenient place to keep things common to both the client and server.
 public class Network {
@@ -31,6 +32,7 @@ public class Network {
 		kryo.register(Character.class);
 		kryo.register(NPBlobs.class);
 		kryo.register(NPBlob.class);
+		kryo.register(ArrayList.class);
 		
 	}
 
@@ -50,7 +52,7 @@ public class Network {
 	}
 	
 	static public class NPBlobs{
-		public List npblobs;
+		public List<NPBlob> npblobs;
 	}
 	
 	static public class ServerInput {

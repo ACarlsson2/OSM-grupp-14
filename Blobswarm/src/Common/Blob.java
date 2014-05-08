@@ -5,7 +5,6 @@ import java.awt.Point;
 public class Blob {
 	//Fields
 	private Point position;
-	private Point velocity;
 	private int id;
 	private int direction;
 	private String name;
@@ -46,9 +45,6 @@ public class Blob {
 		return this.direction;
 	}
 	
-	public Point getVelocity(){
-		return velocity;
-	}
 	
 	public int getId(){
 		return this.id;

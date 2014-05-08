@@ -14,11 +14,27 @@ import Common.Blob;
  */
 public class NPBlob extends Blob implements Runnable{
 	
-	private ArrayList<NPBlob> npblobs;
+	private List<NPBlob> npblobs;
+	private Point velocity;
 	
-	public NPBlob(ArrayList<NPBlob> npblobs){
+	
+	public NPBlob(List<NPBlob> npblobs, Point pos, int ID, int dir, String name){
+		super(pos, ID, dir, name);
 		this.npblobs = npblobs;
+		this.getVelocity().setLocation(0,0);
+		
 	}
+	
+	
+	public NPBlob(List<NPBlob> npblobs){
+		super(new Point(0,0), 0, 0, "NPB");
+		this.npblobs = npblobs;
+		this.velocity = new Point(0,0);
+		
+	}
+	
+	
+	
 	
 	/**
 	 * Calculates a point to steer such that the separation of the npb's are kept and
@@ -50,7 +66,7 @@ public class NPBlob extends Blob implements Runnable{
 		double vx = 0;
 		double vy = 0;
 		
-		for (Blob b : npblobs) {
+		for (NPBlob b : npblobs) {
 			if (!b.equals(this)) {
 				vx += b.getVelocity().x;
 				vy += b.getVelocity().y;
@@ -63,7 +79,7 @@ public class NPBlob extends Blob implements Runnable{
 			vy = vy/(N-1);
 		}
 		Point pv = new Point();
-		pv.setLocation((vx - this.getVelocity().x)/8, (vy - this.getVelocity().y)/8);
+		pv.setLocation((vx - this.getVelocity().getX())/8, (vy - this.getVelocity().getY())/8);
 		return pv;
 	}
 	
@@ -78,7 +94,7 @@ public class NPBlob extends Blob implements Runnable{
 		
 		Point pos = this.getPosition();
 		
-		for (Blob b : npblobs) {
+		for (NPBlob b : npblobs) {
 			Point bpos = b.getPosition();
 			if (!b.equals(this)) {
 				 x = x + bpos.x;
@@ -127,5 +143,19 @@ public class NPBlob extends Blob implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public Point getVelocity(){
+		return velocity;
+	}
+	
+	public void setVelocity(Point v){
+		this.velocity = v;
+	}
+	
+	public void setVelocity(double vx, double vy){
+		Point v = new Point();
+		v.setLocation(vx, vy);
+		this.velocity = v;
 	}
 }

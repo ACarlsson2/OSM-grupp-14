@@ -114,6 +114,9 @@ public class Blobserver {
 		frame.setSize(320, 200);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		NPBlob npb = new NPBlob(npblobs);
+		 new Thread(npb).run();
+		npblobs.add(npb); // Add a test npblob
 		
 		while(true){
 			

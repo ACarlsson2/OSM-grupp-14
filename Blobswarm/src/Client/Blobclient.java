@@ -5,51 +5,33 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import Common.Blob;
 import Common.Network;
 import Common.Network.Blobs;
-import Common.Network.ChatMessage;
 import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
-import Server.Blobserver.BlobConnection;
 import Server.NPBlob;
 
 import com.esotericsoftware.kryonet.Client;
@@ -64,7 +46,9 @@ public class Blobclient implements KeyListener {
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
 	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
-
+	
+	Map<NPBlob, BlobView> npbViews = new HashMap<NPBlob, BlobView>();
+	
 	// Constructor
 	public Blobclient() {
 		client = new Client();
@@ -75,6 +59,7 @@ public class Blobclient implements KeyListener {
 		Network.register(client);
 
 		client.addListener(new Listener() {
+			
 			public void connected(Connection connection) {
 				RegisterName registerName = new RegisterName();
 				registerName.name = name;
@@ -106,7 +91,30 @@ public class Blobclient implements KeyListener {
 				}
 				
 				if (object instanceof NPBlobs) {
-					
+					List<NPBlob> blobs =  ((NPBlobs)object).npblobs;
+					for (NPBlob npBlob : blobs) {
+						updateNPBViews(npBlob, npbViews);
+					}
+				}
+			}
+			
+			private void updateNPBViews(NPBlob blob, Map<NPBlob, BlobView> npbViews){
+				if (blob != null) {
+					if (!npbViews.containsKey(blob)) {
+						BlobView view = new BlobView(0, "NPB");
+						view.update(blob.getPosition(), blob.getDirection());
+						npbViews.put(blob, new BlobView(0, "NPB"));
+						chatFrame.getPanel().add(view.getJComponent());
+						chatFrame.getPanel().add(view.getNameLabel());
+						chatFrame.getPanel().setComponentZOrder(view.getJComponent(), 0);
+						chatFrame.getPanel().setComponentZOrder(view.getNameLabel(), 0);
+					}
+					else{
+						BlobView view = npbViews.get(blob);
+						if (view != null) {
+							view.update(blob.getPosition(), blob.getDirection());
+						}
+					}
 				}
 			}
 
