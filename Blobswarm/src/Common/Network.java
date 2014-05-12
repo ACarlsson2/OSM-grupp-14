@@ -18,9 +18,9 @@ public class Network {
 		kryo.register(String[].class);
 		kryo.register(Blob.class);
 		kryo.register(Blob[].class);
-		kryo.register(NPBlob.class);
+		kryo.register(InfoNPB.class);
 		kryo.register(NPBlobs.class);
-		kryo.register(NPBlob[].class);
+		kryo.register(InfoNPB[].class);
 		kryo.register(List.class);//
 		kryo.register(Point.class);
 		kryo.register(UpdateNames.class);

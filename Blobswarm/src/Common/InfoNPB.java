@@ -9,7 +9,12 @@ public class InfoNPB {
 	private int direction;
 	
 	//Constructor
-	InfoNPB(Point point, int direction){
+	public InfoNPB(){
+		this.point = new Point(0,0);
+		this.direction = 0;
+	}
+	
+	public InfoNPB(Point point, int direction){
 		this.point = point;
 		this.direction = direction;
 	}
@@ -18,6 +23,12 @@ public class InfoNPB {
 	public void update(NPBlob npb) {
 		this.point = npb.getPosition();
 		this.direction = npb.getDirection();
+	}
+	public int getDirection(){
+		return this.direction;
+	}
+	public Point getPosition(){
+		return this.point;
 	}
 	
 	

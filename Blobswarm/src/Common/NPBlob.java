@@ -179,4 +179,8 @@ public class NPBlob extends Blob implements Runnable{
 	public void setVelocity(double vx, double vy){
 		this.velocity.setLocation(vx, vy);
 	}
+	
+	public InfoNPB getInfo(){
+		return new InfoNPB(getPosition(),getDirection());
+	}
 }

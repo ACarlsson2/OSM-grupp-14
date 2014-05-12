@@ -5,12 +5,10 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,8 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import Common.Blob;
+import Common.InfoNPB;
 import Common.Network;
 import Common.Network.Blobs;
+import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
@@ -43,6 +43,7 @@ public class Blobclient implements KeyListener {
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
 	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
+	ArrayList<NPBlobView> NPBlobViews = new ArrayList<NPBlobView>();
 	ServerInput output = new ServerInput();
 
 	// Constructor
@@ -85,6 +86,35 @@ public class Blobclient implements KeyListener {
 						
 						client.sendTCP(output);
 					}
+				}
+				
+				if (object instanceof NPBlobs) {
+					
+
+					
+					NPBlobs npblobs = (NPBlobs) object;
+					ArrayList<InfoNPB> NPBArray = new ArrayList<InfoNPB>(
+							npblobs.blobs.length);
+
+					
+					
+					for (int i = 0; i < npblobs.blobs.length; i++) {
+						NPBArray.add(npblobs.blobs[i]);
+					}
+										
+					for(NPBlobView npbv : NPBlobViews) {
+					       chatFrame.getPanel().remove(npbv.getJComponent());
+					       chatFrame.getPanel().repaint();
+					}
+					for(InfoNPB npb : NPBArray){
+					     NPBlobView newBV = new NPBlobView();
+					     newBV.set(npb.getPosition(),npb.getDirection());
+					     chatFrame.getPanel().add(newBV.getJComponent());
+					     chatFrame.getPanel().setComponentZOrder(newBV.getJComponent(), 0);
+					     chatFrame.getPanel().repaint();
+					     NPBlobViews.add(newBV);
+					}
+					
 				}
 			}
 

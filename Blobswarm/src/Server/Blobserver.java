@@ -123,8 +123,9 @@ public class Blobserver {
 					
 			NPBlobs npbInfo = new NPBlobs();
 			InfoNPB[] infoNPB = new InfoNPB[world.getNPB().size()];
+
 			for (NPBlob npBlob : world.getNPB()) {
-				infoNPB[world.getNPB().indexOf(npBlob)].update(npBlob);
+				infoNPB[world.getNPB().indexOf(npBlob)] = npBlob.getInfo();
 			}
 			npbInfo.blobs = infoNPB;
 			server.sendToAllTCP(npbInfo);
