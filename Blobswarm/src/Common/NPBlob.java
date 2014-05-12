@@ -22,7 +22,6 @@ public class NPBlob extends Blob implements Runnable{
 		super(pos, ID, dir, name);
 		this.npblobs = npblobs;
 		this.velocity = new Point(0,0);
-		
 	}
 	
 	

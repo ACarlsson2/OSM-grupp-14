@@ -110,28 +110,16 @@ public class Blobserver {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		while(true){
+while(true){
 			
 			Connection[] connections = server.getConnections();
 			ArrayList<Blob> blobs = new ArrayList<Blob>(connections.length);
-			
 			for (int i = 0; i < connections.length; i++) {
 				ChatConnection connection = (ChatConnection)connections[i];
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
-			
-			
 			Blobs blobArray = new Blobs();
-			NPBlobs npblobs = new NPBlobs();
-			synchronized (world.getNPB()) {
-				NPBlob[] npbs = new NPBlob[world.getNPB().size()];
-				for (NPBlob npBlob : world.getNPB()) {
-					npbs[world.getNPB().indexOf(npBlob)] = npBlob;
-				}
-				npblobs.blobs = npbs;
-				server.sendToAllTCP(npblobs);
-			}
 			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
 			server.sendToAllTCP(blobArray);
 			try {
@@ -143,8 +131,6 @@ public class Blobserver {
 		}
 		
 	}
-	
-	
 
 	void updateNames () {
 		//x marked comments to update something every players pos.
