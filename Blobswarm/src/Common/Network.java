@@ -48,7 +48,7 @@ public class Network {
 		public Blob[] blobs;
 	}
 	static public class NPBlobs{
-		public NPBlob[] blobs;
+		public InfoNPB[] blobs;
 	}
 	static public class ServerInput {
 		public boolean up = false;

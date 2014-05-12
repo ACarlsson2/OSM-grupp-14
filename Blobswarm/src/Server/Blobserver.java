@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import Common.Blob;
+import Common.InfoNPB;
 import Common.NPBlob;
 import Common.Network;
 import Common.Network.Blobs;
@@ -110,7 +111,7 @@ public class Blobserver {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-while(true){
+		while(true){
 			
 			Connection[] connections = server.getConnections();
 			ArrayList<Blob> blobs = new ArrayList<Blob>(connections.length);
@@ -119,6 +120,15 @@ while(true){
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
+					
+			NPBlobs npbInfo = new NPBlobs();
+			InfoNPB[] infoNPB = new InfoNPB[world.getNPB().size()];
+			for (NPBlob npBlob : world.getNPB()) {
+				infoNPB[world.getNPB().indexOf(npBlob)].update(npBlob);
+			}
+			npbInfo.blobs = infoNPB;
+			server.sendToAllTCP(npbInfo);
+			
 			Blobs blobArray = new Blobs();
 			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
 			server.sendToAllTCP(blobArray);
