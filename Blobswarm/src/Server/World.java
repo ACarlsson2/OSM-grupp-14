@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 
 import Common.Blob;
+import Common.NPBlob;
 
 
 public class World {
