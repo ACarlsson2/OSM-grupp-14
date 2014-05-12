@@ -112,7 +112,7 @@ public class NPBlob extends Blob implements Runnable{
 	}
 	
 	 
-	private synchronized void updateNPBPositions() {
+	private synchronized void updateNPBPosition() {
 		Point v1 = separation();
 		Point v2 = cohesion();
 		Point v3 = alignment();
@@ -130,7 +130,7 @@ public class NPBlob extends Blob implements Runnable{
 	
 	@Override
 	public void move(int direction) {
-		updateNPBPositions();
+		updateNPBPosition();
 	}
 
 	@Override
@@ -141,6 +141,28 @@ public class NPBlob extends Blob implements Runnable{
 				Thread.sleep(1000/30); // 30 FPS
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public int getDirection(){
+		int x = this.getVelocity().x;
+		int y = this.getVelocity().y;
+		if (x > y) {
+			if(x >=0){
+				return 4;
+			}
+			else{
+				return 3;
+			}
+		}
+		else{
+			if(y >= 0){
+				return 1;
+			}
+			else{
+				return 2;
 			}
 		}
 	}

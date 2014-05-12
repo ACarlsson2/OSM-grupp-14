@@ -77,6 +77,7 @@ public class Blobserver {
 					connection.name = name;
 					connection.blob = new Blob(connection.name);
 					connection.blob.setID(blobIDs);
+					world.spawnLocation(connection.blob);
 					blobIDs += 1;
 					// Send a "connected" message to everyone except the new client.
 					ChatMessage chatMessage = new ChatMessage();
@@ -127,6 +128,8 @@ public class Blobserver {
 		}
 		
 	}
+	
+	
 
 	void updateNames () {
 		//x marked comments to update something every players pos.

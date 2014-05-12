@@ -1,7 +1,9 @@
 package Server;
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import Common.Blob;
 import Common.NPBlob;
@@ -10,11 +12,11 @@ import Common.NPBlob;
 public class World {
 	//Field
 	private Blob[] playerBlobs;
-	private LinkedList<NPBlob> nonPlayerBlobs;
+	private List<NPBlob> nonPlayerBlobs;
 	
 	//Constructor
 	public World(){	
-		
+		nonPlayerBlobs = Collections.synchronizedList(new LinkedList<NPBlob>());
 	}
 	
 	//Methods
@@ -45,7 +47,7 @@ public class World {
 
 		for(int i = 0; i < playerBlobs.length; i++){
 			if(!blob.equals(playerBlobs[i])){
-				if(blob.contains(destination, playerBlobs[i])){
+				if(playerBlobs[i].contains(destination)){
 					blob.setDirection(direction);
 					return false;
 				}					
@@ -55,11 +57,51 @@ public class World {
 		return true;
 	}
 	
+	
+	
+	
+	/**
+	 * Updates the position of a spawning blob, such that 
+	 * it is not in conflict with another blob. 
+	 * @param blob
+	 */
+	public void spawnLocation(Blob blob){
+		while (checkConflictingPosition(blob)){
+			blob.getPosition().x += 20;
+			blob.getPosition().y += 5;
+		}
+	}
+	
+	/**
+	 * Checks if a position is safe to spawn in.
+	 * @param blob
+	 * @return
+	 */
+	private boolean checkConflictingPosition(Blob blob){
+		boolean conflict = false;
+		if(playerBlobs != null){
+		for (Blob otherBlob : playerBlobs) {
+			if (!blob.equals(otherBlob)) {
+				if (otherBlob.contains(blob.getPosition())) {
+					conflict = true;
+				}
+			}
+		}
+		}
+		for (Blob otherBlob : nonPlayerBlobs) {
+			if (!blob.equals(otherBlob)) {
+				if (otherBlob.contains(blob.getPosition())) {
+					conflict = true;
+				}
+			}
+		}
+		return conflict;
+	}
 	public Blob[] getPlayers(){
 		return playerBlobs;
 	}
 	
-	public LinkedList<NPBlob> getNPB(){
+	public List<NPBlob> getNPB(){
 		return nonPlayerBlobs;
 	}
 	

@@ -43,19 +43,20 @@ public class Blob {
 	/**
 	 * Check if pos exist inside a blob
 	 * @param pos 
-	 * @param blob
 	 * @return
 	 */
-	public boolean contains(Point pos, Blob blob){
+	public boolean contains(Point pos){
 		double width = pos.getX();
 		double height = pos.getY();
-		if(((blob.position.getX()-(size.getWidth()/2)) <= width) && ((blob.position.getX()+(size.getWidth()/2))) >= width) {
-			if(((blob.position.getY()-(size.getHeight()/2)) <= height) && ((blob.position.getY()+(size.getHeight()/2))) >= height) {
+		if(((this.position.getX()-(size.getWidth()/2)) <= width) && ((this.position.getX()+(size.getWidth()/2))) >= width) {
+			if(((this.position.getY()-(size.getHeight()/2)) <= height) && ((this.position.getY()+(size.getHeight()/2))) >= height) {
 				return true;
 			}
 		}	
 		return false;
 	}
+	
+	
 	
 	public Point getPosition(){
 		return this.position;
@@ -86,6 +87,10 @@ public class Blob {
 	
 	public Size getSize(){
 		return this.size;
+	}
+	
+	public void setPosition(Point position){
+		this.position = position;
 	}
 	
 	public void setDirection(int number){
