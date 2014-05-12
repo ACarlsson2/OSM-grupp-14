@@ -10,9 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import Common.Blob;
+import Common.NPBlob;
 import Common.Network;
 import Common.Network.Blobs;
 import Common.Network.ChatMessage;
+import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
@@ -31,6 +33,7 @@ public class Blobserver {
 
 	public Blobserver () throws IOException {
 		this.world = new World();
+		this.world.spawnNPB();
 		server = new Server() {
 			protected Connection newConnection () {
 				// By providing our own connection implementation, we can store per
@@ -111,12 +114,24 @@ public class Blobserver {
 			
 			Connection[] connections = server.getConnections();
 			ArrayList<Blob> blobs = new ArrayList<Blob>(connections.length);
+			
 			for (int i = 0; i < connections.length; i++) {
 				ChatConnection connection = (ChatConnection)connections[i];
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
+			
+			
 			Blobs blobArray = new Blobs();
+			NPBlobs npblobs = new NPBlobs();
+			synchronized (world.getNPB()) {
+				NPBlob[] npbs = new NPBlob[world.getNPB().size()];
+				for (NPBlob npBlob : world.getNPB()) {
+					npbs[world.getNPB().indexOf(npBlob)] = npBlob;
+				}
+				npblobs.blobs = npbs;
+				server.sendToAllTCP(npblobs);
+			}
 			blobArray.blobs = (Blob[])blobs.toArray(new Blob[blobs.size()]);
 			server.sendToAllTCP(blobArray);
 			try {

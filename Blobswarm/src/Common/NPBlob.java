@@ -61,7 +61,7 @@ public class NPBlob extends Blob implements Runnable{
 	 * Scales the velocity such that NBP's try to align their directions
 	 * @return
 	 */
-	private Point alignment(){
+	private  Point alignment(){
 		
 		double vx = 0;
 		double vy = 0;
@@ -88,7 +88,7 @@ public class NPBlob extends Blob implements Runnable{
 	 * NPB's try to stay close to their immediate neighbors.
 	 * @return a point to steer towards.
 	 */
-	private Point cohesion(){
+	private  Point cohesion(){
 		double x = 0;
 		double y = 0;
 		
@@ -112,7 +112,7 @@ public class NPBlob extends Blob implements Runnable{
 	}
 	
 	 
-	private synchronized void updateNPBPosition() {
+	private  void updateNPBPosition() {
 		Point v1 = separation();
 		Point v2 = cohesion();
 		Point v3 = alignment();
@@ -130,7 +130,9 @@ public class NPBlob extends Blob implements Runnable{
 	
 	@Override
 	public void move(int direction) {
-		updateNPBPosition();
+		synchronized (npblobs) {
+			updateNPBPosition();
+		}
 	}
 
 	@Override

@@ -2,6 +2,8 @@
 package Common;
 
 import java.awt.Point;
+import java.util.List;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -16,6 +18,10 @@ public class Network {
 		kryo.register(String[].class);
 		kryo.register(Blob.class);
 		kryo.register(Blob[].class);
+		kryo.register(NPBlob.class);
+		kryo.register(NPBlobs.class);
+		kryo.register(NPBlob[].class);
+		kryo.register(List.class);//
 		kryo.register(Point.class);
 		kryo.register(UpdateNames.class);
 		kryo.register(ChatMessage.class);
@@ -40,6 +46,9 @@ public class Network {
 	}
 	static public class Blobs {
 		public Blob[] blobs;
+	}
+	static public class NPBlobs{
+		public NPBlob[] blobs;
 	}
 	static public class ServerInput {
 		public boolean up = false;

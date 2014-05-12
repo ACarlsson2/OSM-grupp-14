@@ -5,12 +5,10 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,8 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import Common.Blob;
+import Common.NPBlob;
 import Common.Network;
 import Common.Network.Blobs;
+import Common.Network.NPBlobs;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
@@ -42,7 +42,9 @@ public class Blobclient implements KeyListener {
 	Client client;
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
+	ArrayList<Integer> existingNPBIDs = new ArrayList<Integer>();
 	ArrayList<BlobView> blobViews = new ArrayList<BlobView>();
+	ArrayList<BlobView> npbViews = new ArrayList<BlobView>();
 	ServerInput output = new ServerInput();
 
 	// Constructor
@@ -68,21 +70,41 @@ public class Blobclient implements KeyListener {
 					return;
 				}
 
+				if (object instanceof NPBlobs){
+					NPBlobs npblobs = (NPBlobs)object;
+					for (NPBlob blob : npblobs.blobs) {
+						if (!existingNPBIDs.contains(blob.getID())) {
+							existingNPBIDs.add(blob.getID());
+							BlobView blobView = new BlobView(blob.getID(), blob.getName());
+							npbViews.add(blobView);
+						}
+						
+					}
+				}
 				if (object instanceof Blobs) {
 					Blobs blobArray = (Blobs) object;
 					ArrayList<Blob> blobinfo = new ArrayList<Blob>(
 							blobArray.blobs.length);
+					ArrayList<NPBlob> npbinfo = new ArrayList<NPBlob>(blobArray.blobs.length);
 
 					for (int i = 0; i < blobArray.blobs.length; i++) {
-						blobinfo.add(blobArray.blobs[i]);
+						if (blobArray.blobs[i] instanceof NPBlob) {
+							npbinfo.add((NPBlob)blobArray.blobs[i]);//NPB blobbar i array
+						}
+						else{
+						blobinfo.add(blobArray.blobs[i]);//Spelar blobbar i array
+						}
 					}
 
+					if(npbinfo.size() > 0) {
+						chatFrame.animate();
+						
+					}
 					if (blobinfo.size() > 0) {
 						chatFrame.animate();
 						checkNewBlobs(blobinfo);
 						removeDeadBlobs(blobinfo);
 						updateBlobs(blobinfo);
-						
 						client.sendTCP(output);
 					}
 				}
@@ -95,6 +117,8 @@ public class Blobclient implements KeyListener {
 							blobinfo.get(i).getDirection());
 				}
 			}
+			
+			//private void updateNPBlobs(ArrayList<NPBlob>)
 
 			private void checkNewBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {

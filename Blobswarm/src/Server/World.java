@@ -13,6 +13,7 @@ public class World {
 	//Field
 	private Blob[] playerBlobs;
 	private List<NPBlob> nonPlayerBlobs;
+	private int numNPB = 5;
 	
 	//Constructor
 	public World(){	
@@ -58,6 +59,18 @@ public class World {
 	}
 	
 	
+	/**
+	 * Spawns n NPBs
+	 * @param n
+	 */
+	public void spawnNPB(){
+		for (int i = 0; i < numNPB; i++) {
+			NPBlob blob = new NPBlob(nonPlayerBlobs, new Point(50,50));
+			spawnLocation(blob);
+			nonPlayerBlobs.add(blob);
+			new Thread(blob).start();
+		}
+	}
 	
 	
 	/**
@@ -67,8 +80,8 @@ public class World {
 	 */
 	public void spawnLocation(Blob blob){
 		while (checkConflictingPosition(blob)){
-			blob.getPosition().x += 20;
-			blob.getPosition().y += 5;
+			blob.getPosition().x += 100;
+			blob.getPosition().y += 50;
 		}
 	}
 	
