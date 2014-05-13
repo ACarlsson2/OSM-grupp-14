@@ -14,6 +14,8 @@ public class World {
 	private Blob[] playerBlobs;
 	private List<NPBlob> nonPlayerBlobs;
 	private int numNPB = 5;
+	private int height;
+	private int width;
 	
 	//Constructor
 	public World(){	
@@ -120,6 +122,22 @@ public class World {
 	
 	public void setPlayers(Blob[] listOfPlayers){
 		this.playerBlobs = listOfPlayers;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
 	
 }

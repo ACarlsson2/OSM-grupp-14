@@ -16,7 +16,7 @@ public class NPBlob extends Blob implements Runnable{
 	
 	private List<NPBlob> npblobs;
 	private Point velocity;
-	
+	private static double velocitylimit = 5.0;
 	
 	public NPBlob(List<NPBlob> npblobs, Point pos, int ID, int dir, String name){
 		super(pos, ID, dir, name);
@@ -53,7 +53,8 @@ public class NPBlob extends Blob implements Runnable{
 				}
 			}
 		}
-		return c;
+		
+		return scaleVelocity(c);
 	}
 	
 	/**
@@ -79,7 +80,7 @@ public class NPBlob extends Blob implements Runnable{
 		}
 		Point pv = new Point();
 		pv.setLocation((vx - this.getVelocity().getX())/8, (vy - this.getVelocity().getY())/8);
-		return pv;
+		return scaleVelocity(pv);
 	}
 	
 	
@@ -107,7 +108,7 @@ public class NPBlob extends Blob implements Runnable{
 		
 		Point pc = new Point();
 		pc.setLocation(x - pos.x , y - pos.y);
-		return pc;
+		return scaleVelocity(pc);
 	}
 	
 	 
@@ -117,20 +118,38 @@ public class NPBlob extends Blob implements Runnable{
 		Point v3 = alignment();
 		Point pos = this.getPosition();
 		Point vel = this.getVelocity();
-		double vx = vel.getX() + v1.getX() + v2.getX() + v3.getX();
-		double vy = vel.getY() + v1.getY() + v2.getY() + v3.getY();
+		double vx = vel.getX() + v1.getX() + 0.2*v2.getX() + v3.getX();
+		double vy = vel.getY() + v1.getY() + 0.2*v2.getY() + v3.getY();
 		
-		double px = pos.getX() + vx;
-		double py = pos.getY() + vy;
+		Point V = scaleVelocity(vx,vy);
+		
+		double px = pos.getX() + V.getX();
+		double py = pos.getY() + V.getY();
+		
+		
+		
+		if (px < this.getSize().getWidth()) {
+			px = this.getSize().getWidth();
+		}
+		if(px > 600 - this.getSize().getWidth()){
+			px = 600.0 - this.getSize().getWidth();
+		}
+		if(py < this.getSize().getHeight()){
+			py = this.getSize().getHeight();
+		}
+		if(py > 600 - this.getSize().getHeight()){
+			py = 600.0 - this.getSize().getHeight();
+		}
 		
 		this.getPosition().setLocation(px,py);
-		this.getVelocity().setLocation(vx, vy);
+		this.velocity = V;
 	}
 	
 	@Override
 	public void move(int direction) {
 		synchronized (npblobs) {
 			updateNPBPosition();
+			System.out.println(this.getPosition());
 		}
 	}
 
@@ -148,6 +167,7 @@ public class NPBlob extends Blob implements Runnable{
 	
 	@Override
 	public int getDirection(){
+		
 		int x = this.getVelocity().x;
 		int y = this.getVelocity().y;
 		if (x > y) {
@@ -168,6 +188,32 @@ public class NPBlob extends Blob implements Runnable{
 		}
 	}
 	
+	
+	public Point scaleVelocity(Point velocity){
+		double vx = velocity.getX();
+		double vy = velocity.getY();
+		double r = Math.sqrt(vx*vx + vy*vy);
+		if (r > velocitylimit) {
+			vx = (vx/r)*velocitylimit;
+			vy = (vy/r)*velocitylimit;
+		}
+		Point newV = new Point();
+		newV.setLocation(vx, vy);
+		return newV;
+	}
+	
+	public Point scaleVelocity(double vx, double vy){
+		double r = Math.sqrt(vx*vx + vy*vy);
+		if (r > velocitylimit) {
+			vx = (vx/r)*velocitylimit;
+			vy = (vy/r)*velocitylimit;
+		}
+		Point newV = new Point();
+		newV.setLocation(vx, vy);
+		return newV;
+	}
+	
+	
 	public Point getVelocity(){
 		return velocity;
 	}
@@ -184,3 +230,4 @@ public class NPBlob extends Blob implements Runnable{
 		return new InfoNPB(getPosition(),getDirection());
 	}
 }
+

@@ -34,6 +34,8 @@ public class Blobserver {
 
 	public Blobserver () throws IOException {
 		this.world = new World();
+		world.setHeight(600);
+		world.setWidth(600);
 		this.world.spawnNPB();
 		server = new Server() {
 			protected Connection newConnection () {
