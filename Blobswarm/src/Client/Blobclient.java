@@ -106,6 +106,7 @@ public class Blobclient implements KeyListener {
 					       chatFrame.getPanel().remove(npbv.getJComponent());
 					       chatFrame.getPanel().repaint();
 					}
+					NPBlobViews = new ArrayList<NPBlobView>();
 					for(InfoNPB npb : NPBArray){
 					     NPBlobView newBV = new NPBlobView();
 					     newBV.set(npb.getPosition(),npb.getDirection());
