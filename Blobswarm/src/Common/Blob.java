@@ -10,7 +10,7 @@ public class Blob {
 	private int ID;
 	private int direction;
 	private String name;
-	private int speed = 10;
+	private int speed = 5;
 	private Size size = new Size(70,55); //To Change blobSize change this
 	
 	//Constructor
