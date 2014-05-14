@@ -16,7 +16,7 @@ public class BlobTest {
 		assertEquals(BlobTest.getPosition(), test);
 		
 		BlobTest.move(1);
-		test.setLocation(50,40);
+		test.setLocation(50,50 - BlobTest.getSpeed());
 		assertEquals(BlobTest.getPosition(), test);
 		
 		BlobTest.move(2);
@@ -24,7 +24,7 @@ public class BlobTest {
 		assertEquals(BlobTest.getPosition(), test);
 		
 		BlobTest.move(3);
-		test.setLocation(40,50);
+		test.setLocation(50 - BlobTest.getSpeed(),50);
 		assertEquals(BlobTest.getPosition(), test);
 		
 		BlobTest.move(4);

@@ -131,8 +131,8 @@ public class NPBlob extends Blob implements Runnable{
 		if (px < this.getSize().getWidth()) {
 			px = this.getSize().getWidth();
 		}
-		if(px > 600 - this.getSize().getWidth()){
-			px = 600.0 - this.getSize().getWidth();
+		if(px > 1200 - this.getSize().getWidth()){
+			px = 1200.0 - this.getSize().getWidth();
 		}
 		if(py < this.getSize().getHeight()){
 			py = this.getSize().getHeight();

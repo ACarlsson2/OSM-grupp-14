@@ -265,7 +265,7 @@ public class Blobclient implements KeyListener {
 		public ChatFrame(String host) {
 			super("Blobswarm");
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			setSize(600, 600);
+			setSize(1200, 600);
 			setLocationRelativeTo(null);
 
 			Container contentPane = getContentPane();
