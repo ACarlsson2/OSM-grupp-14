@@ -3,6 +3,7 @@ package Server;
 import java.util.ArrayList;
 
 import Common.Blob;
+import Common.NPBlob;
 import Common.Network.ChatMessage;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
@@ -69,13 +70,13 @@ public class ClientHandler extends Listener {
 
 	}
 
-	private void updateNames () {
+	private void updateNames () {//TODO Can this run also when a player disconnect? For me to "update" current players ?
 		//x marked comments to update something every players pos.
 		// Collect the names for each connection.
 		Connection[] connections = server.getConnections();
 		int totalConnections = connections.length; //x
 		ArrayList<String> names = new ArrayList<String>(totalConnections);//x
-		world.setPlayers(new Blob[totalConnections]);//x
+		world.setPlayers(new Blob[totalConnections]);//x	
 		for (int i = connections.length - 1; i >= 0; i--) {
 			ChatConnection connection = (ChatConnection)connections[i];
 			names.add(connection.name);
@@ -84,6 +85,7 @@ public class ClientHandler extends Listener {
 		// Send the names to everyone.
 		UpdateNames updateNames = new UpdateNames();
 		updateNames.names = (String[])names.toArray(new String[names.size()]);
+		NPBlob.setPlayerBlobs(world.getPlayers()); //XXX update but if someone disconnect he is still there IMPORTANT TO NOT FORGET
 		server.sendToAllTCP(updateNames);
 	}
 }

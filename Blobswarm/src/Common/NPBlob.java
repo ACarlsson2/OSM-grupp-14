@@ -3,8 +3,9 @@ package Common;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import Common.Blob;
+import Server.World;
 
 /**
  * 
@@ -14,6 +15,9 @@ import Common.Blob;
  */
 public class NPBlob extends Blob implements Runnable{
 	
+	private int aggression = 70; //Max 100% min 0% 70%Standard good!!!!!!
+	private static Blob[] playerBlobs;//TODO SO UPDATE THIS FROM WORLD EVERYTIME SOMEONE CONNECT FROM STRING NAME UPDATE du vet! 
+	private Blob target;
 	private List<NPBlob> npblobs;
 	private Point velocity;
 	private static double velocitylimit = 5.0;
@@ -33,6 +37,64 @@ public class NPBlob extends Blob implements Runnable{
 	}
 	
 	
+	/**
+	 * Choose what direction this will move to 
+	 * get closer to point
+	 * @param point - position we want to get closer too
+	 * @return direction to get closer
+	 */
+	public int getDirectionToPoint(Point point){
+		double x = point.x - super.getPosition().x;
+		double y = point.y - super.getPosition().y;
+		
+		Random rn = new Random();
+		boolean bool = rn.nextBoolean();
+		if(y == 0){
+			bool = false;
+		}
+		if(x == 0){
+			bool = true;
+		}
+		
+		if(bool){		
+			if(y < 0){
+				return 1;
+			}
+			return 2;		
+		}
+		else {
+			if(x < 0){
+				return 3;
+			}
+			return 4;
+		}
+	}
+
+	public void setTarget(Blob[] players){
+		this.target = getNearestBlob(players);
+	}
+	
+	public Blob getTarget(){
+		return target;
+	}
+	
+	/**
+	 * Check in Blobs and return the closest blob
+	 * @param blobs - an arraylist of all blobs
+	 * @return Blob
+	 */
+		public Blob getNearestBlob(Blob[] blobs){	
+			if(blobs.length == 0){
+				return null;
+			}
+			Blob blob = blobs[0];
+			for(int i = 0; i < blobs.length; i++){
+				if(super.getPosition().distance(blob.getPosition()) > super.getPosition().distance(blobs[i].getPosition())){
+				blob = blobs[i];
+				}
+			}
+			return blob;
+		}
 	
 	
 	/**
@@ -113,6 +175,13 @@ public class NPBlob extends Blob implements Runnable{
 	
 	 
 	private  void updateNPBPosition() {
+		Random random = new Random();
+		
+		if((random.nextInt(100) < aggression) && (getPlayerBlobs() != null)){
+			this.setTarget(getPlayerBlobs());
+			super.move(this.getDirectionToPoint(target.getPosition()));
+			return;
+		}
 		Point v1 = separation();
 		Point v2 = cohesion();
 		Point v3 = alignment();
@@ -149,7 +218,6 @@ public class NPBlob extends Blob implements Runnable{
 	public void move(int direction) {
 		synchronized (npblobs) {
 			updateNPBPosition();
-			System.out.println(this.getPosition());
 		}
 	}
 
@@ -229,5 +297,16 @@ public class NPBlob extends Blob implements Runnable{
 	public InfoNPB getInfo(){
 		return new InfoNPB(getPosition(),getDirection());
 	}
+	
+
+	public static Blob[] getPlayerBlobs() {
+		return playerBlobs;
+	}
+
+
+	public static void setPlayerBlobs(Blob[] playerBlobs) {
+		NPBlob.playerBlobs = playerBlobs;
+	}
+	
 }
 
