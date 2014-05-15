@@ -106,7 +106,7 @@ public class Blob {
 			this.position.y -= speed;
 		break;
 		case 2:	//Down
-			if(this.position.y <= 1135)
+			if(this.position.y <= 535)
 			this.position.y += speed;
 		break;
 		case 3:	//Left
