@@ -124,12 +124,5 @@ public class Blob {
 	}
 	
 	//TODO equal funktion that check ID and return true if same ID
-	@Override
-	public boolean equals(Object other){
-		if(other instanceof Blob){
-			return this.ID == ((Blob)other).ID;
-		}
-		return false;
-	}
 	
 }
