@@ -106,7 +106,7 @@ public class Blob {
 			this.position.y -= speed;
 		break;
 		case 2:	//Down
-			if(this.position.y <= 1135)
+			if(this.position.y <= 535)
 			this.position.y += speed;
 		break;
 		case 3:	//Left
@@ -114,7 +114,7 @@ public class Blob {
 			this.position.x -= speed;
 		break;
 		case 4:	//Right
-			if(this.position.x <= 1150)
+			if(this.position.x <= 550)
 			this.position.x += speed;
 		break;
 			default:
@@ -123,7 +123,11 @@ public class Blob {
 		return;
 	}
 	
-	//TODO equal funktion that check ID and return true if same ID
+	
+	/**
+	 * Equals 
+	 * return true if the ID's are the same.
+	 */
 	@Override
 	public boolean equals(Object other){
 		if(other instanceof Blob){
