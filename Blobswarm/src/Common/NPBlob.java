@@ -89,9 +89,15 @@ public class NPBlob extends Blob implements Runnable{
 			}
 			Blob blob = blobs[0];
 			for(int i = 0; i < blobs.length; i++){
-				if(super.getPosition().distance(blob.getPosition()) > super.getPosition().distance(blobs[i].getPosition())){
+				if(super.getPosition().distance(blob.getPosition()) > super.getPosition().distance(blobs[i].getPosition()) || !blob.getAlive()){
 				blob = blobs[i];
 				}
+			}
+			if (blob.contains(super.getPosition())){
+				blob.setAlive(false);
+			}
+			if(!blob.getAlive()) {
+				return null;
 			}
 			return blob;
 		}
@@ -179,8 +185,10 @@ public class NPBlob extends Blob implements Runnable{
 		
 		if((random.nextInt(100) < aggression) && (getPlayerBlobs() != null)){
 			this.setTarget(getPlayerBlobs());
+			if(target != null){
 			super.move(this.getDirectionToPoint(target.getPosition()));
 			return;
+			}
 		}
 		Point v1 = separation();
 		Point v2 = cohesion();

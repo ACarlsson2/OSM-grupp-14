@@ -121,8 +121,10 @@ public class Blobclient implements KeyListener {
 			private void updateBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {
 					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getID()));
-					currBlob.update(blobinfo.get(i).getPosition(),
+					currBlob.setAlive(blobinfo.get(i).getAlive());
+						currBlob.update(blobinfo.get(i).getPosition(),	
 							blobinfo.get(i).getDirection());
+					
 				}
 			}
 

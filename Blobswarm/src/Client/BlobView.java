@@ -22,6 +22,7 @@ public class BlobView {
     
     private JComponent comp;
     private JLabel nameLabel;
+    private boolean alive;
     
     String path0 = "Blob0.png";
     String path1 = "Blob1.png";
@@ -38,6 +39,7 @@ public class BlobView {
     //Constructor
     public BlobView(int ID, String name) {
         this.ID = ID;
+        this.alive = true;
         nameLabel = new JLabel("name");
         nameLabel.setText(name);
 
@@ -83,7 +85,9 @@ public class BlobView {
 		}        
         JLabel temp = (JLabel) comp;
         if(temp.getIcon()!=image)
-        temp.setIcon(new ImageIcon(image));
+        if(alive){
+        	temp.setIcon(new ImageIcon(image));
+        }
     }
 
 	private void styleBlobName() {
@@ -103,6 +107,24 @@ public class BlobView {
     
     public int getID(){
     	return this.ID;
+    }
+    
+    public void setAlive(boolean alive){
+    	this.alive = alive;
+    	if(!this.alive){
+    		try {
+    			image = ImageIO.read(new File("DeadBlob.png"));
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}        
+            JLabel temp = (JLabel) comp;
+            if(temp.getIcon()!=image)
+            temp.setIcon(new ImageIcon(image));
+    	}
+    }
+    public boolean getAlive(){
+    	return this.alive;
     }
     
 }

@@ -30,6 +30,7 @@ public class ClientHandler extends Listener {
 
 		if (object instanceof ServerInput) {
 			if (connection.name == null) return;
+			if (!connection.blob.getAlive()) return;
 			ServerInput input = ((ServerInput)object);		
 			if (input.up)
 					world.attemptMove(connection.blob, 1);

@@ -11,10 +11,12 @@ public class Blob {
 	private int direction;
 	private String name;
 	private int speed = 5;
+	private boolean alive;
 	private Size size = new Size(70,55); //To Change blobSize change this
 	
 	//Constructor
 	public Blob() { 
+		this.alive = true;
 		this.position = new Point(50,50);
 		this.ID = 0;
 		this.direction = 0;
@@ -26,6 +28,7 @@ public class Blob {
 		this.ID = 0;
 		this.direction = 0;
 		this.name = name;
+		this.alive = true;
 	}
 	
 	public Blob(Point pos, int ID, int dir, String name) { 
@@ -33,6 +36,7 @@ public class Blob {
 		this.ID = ID;
 		this.direction = dir;
 		this.name = name;
+		this.alive = true;
 	}
 	
 	//Methods
@@ -95,6 +99,13 @@ public class Blob {
 	
 	public void setDirection(int number){
 		this.direction = number;
+	}
+	
+	public void setAlive(boolean alive){
+		this.alive = alive;
+	}
+	public boolean getAlive(){
+		return this.alive;
 	}
 	
 

@@ -19,6 +19,8 @@ public class NPBlobView {
     
     private JComponent comp;
     
+
+    
     String path0 = "NPB0.png";
     String path1 = "NPB1.png";
     String path2 = "NPB2.png";
@@ -39,7 +41,6 @@ public class NPBlobView {
 			e.printStackTrace();
 		}
 
-		
         this.comp.setBackground(new Color(0,0,0,0));
         this.comp.setOpaque(false);
 
@@ -78,5 +79,7 @@ public class NPBlobView {
     public JComponent getJComponent() {
         return this.comp;
     }
+
+
     
 }
