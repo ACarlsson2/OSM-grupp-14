@@ -91,26 +91,30 @@ public class Blobclient implements KeyListener {
 				if (object instanceof NPBlobs) {
 					NPBlobs npblobs = (NPBlobs) object;
 					ArrayList<InfoNPB> NPBArray = new ArrayList<InfoNPB>(
-							npblobs.blobs.length);
+							npblobs.blobs.length);					
 					for (int i = 0; i < npblobs.blobs.length; i++) {
 						NPBArray.add(npblobs.blobs[i]);
-					}					
-					for(NPBlobView npbv : NPBlobViews) {
-					       chatFrame.getPanel().remove(npbv.getJComponent());
 					}
+					while(NPBlobViews.size() < NPBArray.size()){ // Not enough NPBlobViews
+						NPBlobView newBV = new NPBlobView();
+						NPBlobViews.add(newBV);
+						chatFrame.getPanel().add(newBV.getJComponent());
+					    chatFrame.getPanel().setComponentZOrder(newBV.getJComponent(), 0);
+					}
+					while(NPBlobViews.size() > NPBArray.size()){ // Too many NPBlobViews
+						NPBlobViews.remove(NPBlobViews.get(NPBlobViews.size()-1));
+						chatFrame.getPanel().remove(NPBlobViews.get(NPBlobViews.size()-1).getJComponent());
+					}
+					
 					chatFrame.getPanel().repaint();
-					addNPBVs(NPBArray);
+					updateNPBs(NPBArray);
 				}
 			}
 
-			private void addNPBVs(ArrayList<InfoNPB> NPBArray) {
-				NPBlobViews = new ArrayList<NPBlobView>();
+			private void updateNPBs(ArrayList<InfoNPB> NPBArray) {
 				for(InfoNPB npb : NPBArray){
-				     NPBlobView newBV = new NPBlobView();
+					 NPBlobView newBV = NPBlobViews.get(NPBArray.indexOf(npb));
 				     newBV.set(npb.getPosition(),npb.getDirection());
-				     chatFrame.getPanel().add(newBV.getJComponent());
-				     chatFrame.getPanel().setComponentZOrder(newBV.getJComponent(), 0);
-				     NPBlobViews.add(newBV);
 				}
 			}
 
