@@ -11,7 +11,7 @@
       Base::integer().
 
 start(A,B, Base) ->
-    start(A, B, Base, [1]).
+    start(A, B, Base, {1}).
 
 %% @doc TODO: add documentation
 -spec start(A,B,Base, Options) -> ok when 
@@ -21,113 +21,150 @@ start(A,B, Base) ->
       Option::atom() | tuple(),
       Options::[Option].
 
-start(A,B,Base, Options) ->
+start(A,B,Base, {Splits}) ->
    ListA = makeList(A),
    ListB = makeList(B),
 
-   ASplit = split(ListA, lists:nth(1, Options)),
-   BSplit = split(ListB, lists:nth(1, Options)),
-   {Acorr,Bcorr} = fill({ListA,ListB}),
+   ASplit = split(ListA, Splits),
+   BSplit = split(ListB, Splits),
 
-   {Clist, Rlist} = dispatch(ASplit,BSplit,Base,self()),
-  
-   if length(Rlist) =:= length(Acorr) ->
-    Roff = " ";
-    true -> 
-    Roff = ""
+   Segments = lists:seq(1,Splits),
+
+   Workers = createWorkers(ASplit, BSplit, Base, Segments, self()),
+
+   LastWorker = element(2,lists:keyfind(length(ASplit), 1, Workers)),
+   LastWorker ! {length(ASplit)+1, 0},
+
+   Sum = collect(length(ASplit), [], Workers),
+   io:format("~n  ----------~n"),
+    io:format("     ~w~n", [A]),
+    io:format("     ~w~n", [B]),
+    io:format(" + ---------~n"),
+    io:format("    ~w~n",[lists:foldr(fun (ListA, ListB) -> ListB*10 + ListA end, 0, (lists:reverse(Sum)))]).
+
+%% @doc divides the work among workers
+-spec createWorkers(Alist, Blist, Base, Segments, PID) -> ok when
+  Alist::[integer()],
+  Blist::[integer()],
+  Base::integer(),
+  Segments::[integer()],
+  PID::pid().
+
+  createWorkers([],[],_,_,_) ->
+  [];
+
+  createWorkers([Ah|At], [Bh|Bt], Base, [Sh|St], PID) ->
+  [{Sh, spawn_link(fun() -> worker(Ah,Bh,Base,Sh,PID) end)}
+  | createWorkers(At,Bt,Base,St,PID)].
+
+
+%% @doc
+-spec worker(A,B,Base,S,PID) -> ok when
+  A::[integer()],
+  B::[integer()],
+  Base::integer(),
+  S::integer(),
+  PID::pid().
+
+  worker(A,B,Base,S,PID) ->
+  SubworkerNoCarry = spawn_link(fun() -> subworker(A,B,Base,S,PID,0) end),
+  SubworkerCarry = spawn_link(fun() -> subworker(A,B,Base,S,PID,1) end),
+
+  receive
+    {SegmentReceived,Carry} ->
+    if (SegmentReceived -1 =/= S) ->
+      exit(failSegementReceived);
+      (Carry == 1) ->
+      SubworkerCarry ! send,
+      prntCarry(Carry),
+      SubworkerNoCarry ! quit;
+      true ->
+      SubworkerNoCarry ! send,
+      SubworkerCarry ! quit
+    end
   end.
 
+%% @doc 
+-spec subworker(A,B,Base,S,PID,C) -> ok when
+  A::[integer()],
+  B::[integer()],
+  Base::integer(),
+  S::integer(),
+  PID::pid(),
+  C::integer().
 
+  subworker(A,B,Base,S,PID,C) ->
+  Result = addLists(A,B,Base,C),
+  receive
+    send ->
+    PID ! {result, S, Result};
+    quit ->
+    ok
+  end.
 
-%% @doc Splits A and B into blocks of size Segsize and creates processes for each block that calculates the results.
--spec dispatch(A,B,Base,PID) -> ok when 
-      A::list(),
-      B::list(),
-      Base::integer(),
-      PID::pid().
+%% @doc 
 
-dispatch([],[],_,PID) ->
-    PID ! {[0],[]},
+collect(Segments, SumList, Workers) when 1 < length(Workers) -> 
     receive
-  {[C|Clist], Rlist} ->
-      if C =:= 1 ->
-        {[C|Clist],[49|Rlist]};
-         C =:= 0 -> 
-        {[C|Clist], Rlist}
-      end
+  {result, SegmentNumber, NewSum} ->
+  NewWorkers = lists:keydelete(SegmentNumber, 1, Workers),
+       Worker = element(2,lists:keyfind(SegmentNumber-1, 1, NewWorkers)),
+      Worker!{SegmentNumber,element(1,NewSum)},
+      collect(Segments, [{SegmentNumber, NewSum}|SumList], NewWorkers)
     end;
-dispatch([Ah|At],[Bh|Bt],Base,PID) ->
-    NewPid = spawn(add, adder, [Ah,Bh,Base,PID]),
-    dispatch(At,Bt,Base,NewPid).
+
+collect(_Segments, SumList, _) ->
+    receive
+  {result, SegmentNumber, NewSum} ->
+      SortedSumList = lists:keysort(1, [{SegmentNumber, NewSum} | SumList]),
+      if element(1,NewSum) == 1 ->
+        sumListsToSum([ {0,{0,1}} | SortedSumList], []);
+         true ->
+        sumListsToSum(SortedSumList, [])
+      end
+    end.
 
 
-%% @doc Revereses the lists A and B and spawns two processes, one that counts with a carry bit and one that counts without a carry bit.
--spec adder(A,B,Base,PID) -> ok when 
-      A::list(),
-      B::list(),
-      Base::integer(),
-      PID::pid().
-      
-adder(A,B,Base,PID) ->
+sumListsToSum([], Aux) ->
+    lists:flatten(lists:reverse(Aux));
+
+sumListsToSum([{_,{_,Sum}}|SortedSumList], Aux) ->
+    sumListsToSum(SortedSumList,[Sum|Aux]).
+
+
+%% @doc
+-spec addLists(A,B,Base,C) -> ok when
+  A::[integer()],
+  B::[integer()],
+  Base::integer(),
+  C::integer().
+
+  addLists(A,B,Base,C) ->
     Arev = lists:reverse(A),
     Brev = lists:reverse(B),
-    Man0 = spawn(add,manager,[Arev,Brev,Base,0,PID]),
-    Man1 = spawn(add,manager,[Arev,Brev,Base,1,PID]),
-    receive
-  {C, Rlist} ->
-      Man0 ! {C,Rlist},  
-      Man1 ! {C,Rlist}
+    addLists_aux(Arev,Brev,Base, [], C).
+
+addLists_aux([],[],_,List,C) ->
+    {C,List};
+
+
+addLists_aux([LeastA|A], [LeastB|B], Base, List, C) ->
+    {NewCarry, Result} = addSingular(LeastA+C, LeastB, Base),
+      addLists_aux(A, B, Base, [Result|List], C).
+
+
+%% @doc adds
+addSingular(A,B, Base) ->
+    Sum = A+B,
+    SumRem = Sum rem Base,
+    if (SumRem =/= Sum) ->
+      {1, SumRem};
+       true ->
+      {0, Sum}
     end.
 
-%% @doc Checks if we have a carry bit or not and sends this information down to the child so that it can decide what to do.
--spec manager(A,B,Base,C,PID) -> ok when 
-      A::list(),
-      B::list(),
-      C::list(),
-      Base::integer(),
-      PID::pid().
-
-manager(A,B,Base,C,PID) ->
-    Child = spawn(add,calculate,[A,B,Base,[C|[]],PID,[]]),
-    receive
-  {[CarryIn|Clist],Rlist}->
-      if CarryIn=:= C ->
-        Child ! {[CarryIn|Clist],Rlist};
-         CarryIn =/= C->
-        exit(Child,wrongCarry)
-      end
-    end.
-
-%% @doc Calculates the result of A and B and stores it in Acc.
--spec calculate(A,B,Base,C,PID,Acc) -> ok when 
-      A::list(),
-      B::list(),
-      C::list(),
-      Base::integer(),
-      PID::pid(),
-      Acc::list().
-
-calculate([],[],_,C,Pid,Acc) ->
-    receive {Cin,Ain} ->
-      {Cfix,_} = lists:split(length(C)-1,C),
-      Aout = lists:append(Acc,Ain),
-      Cout = lists:append(Cfix,Cin),
-      Pid ! {Cout,Aout}
-    end;
-  
-
-calculate([A|Alist],[B|Blist],Base,[C|Clist],PID,Acc) ->
-    Adec = decode(A),
-    Bdec = decode(B),
-    Result = Adec + Bdec + C,
-  
-    {Cnew, Rnew} = encode(Result,Base),
-    calculate(Alist,Blist,Base,[Cnew|[C|Clist]],PID,[Rnew|Acc]).
-
-
-   
-%% @doc split the list L in to N segements of the same length
--spec split(L,N) -> ok when
+  %% @doc split the list L in to N segements of the same length
+  -spec split(L,N) -> ok when
   L::[integer()],
   N::integer().
 
@@ -198,35 +235,18 @@ case I of
   makeList(NewI,List)
   end.
 
-  %% @doc Converts the first character into a decimal number.
--spec decode([H|_]) -> ok when 
-      H::integer().
-decode(H) when H >=48, H =<57->
-    H - 48;
-decode(H) when H >=65, H =<90 ->
-    H -55;
-decode(H) ->
-    io:fwrite("~w", [H]),
-    0.
 
+%% doc prints the int C 
+  -spec prntCarry(C) -> ok when
+  C::integer().
 
-
-%% @doc Converts a decimal number into base Base.
--spec encode(Val,Base) -> ok when 
-      Val::integer(),
-      Base::integer().
-encode(Val,Base) ->
-    Q = Val div Base,
-    Rem = Val rem Base,
-    %%Rstr = io:format("~s",[[Rem]]),
-    if Rem <10 ->
-      Rstr = Rem+48;
-       Rem >=10 -> 
-      Rstr = Rem+55
-    end,
-    {Q,Rstr}.
-    
-
+  prntCarry(C) ->
+  if(C == 1) ->
+  %     io:format(" "),
+  io:format("~w", [C]);
+  true ->
+  io:format("0")
+  end.
 
 
 %%=====================================================================
