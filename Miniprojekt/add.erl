@@ -25,8 +25,11 @@ start(A,B,Base, {Splits}) ->
    ListA = makeList(A),
    ListB = makeList(B),
 
-   ASplit = split(ListA, Splits),
-   BSplit = split(ListB, Splits),
+   {NewA, NewB} = fill({ListA,ListB}),
+
+
+   ASplit = split(NewA, Splits),
+   BSplit = split(NewB, Splits),
 
    Segments = lists:seq(1,Splits),
 
@@ -36,11 +39,24 @@ start(A,B,Base, {Splits}) ->
    LastWorker ! {length(ASplit)+1, 0},
 
    Sum = collect(length(ASplit), [], Workers),
+   NewSum = listToInt(Sum),
    io:format("~n  ----------~n"),
-    io:format("     ~w~n", [A]),
-    io:format("     ~w~n", [B]),
-    io:format(" + ---------~n"),
-    io:format("    ~w~n",[lists:foldr(fun (ListA, ListB) -> ListB*10 + ListA end, 0, (lists:reverse(Sum)))]).
+   io:format("   ~w~n", [A]),
+   io:format("   ~w~n", [B]),
+   io:format(" + ---------~n"),
+   io:format("   ~w~n",[NewSum]).
+
+    
+
+listToInt(L) ->
+listToInt_aux(L,0).
+
+listToInt_aux([],Acc) ->
+Acc;
+
+listToInt_aux([Lh|Lt],Acc) ->
+listToInt_aux(Lt,Acc*10+Lh).
+
 
 %% @doc divides the work among workers
 -spec createWorkers(Alist, Blist, Base, Segments, PID) -> ok when
@@ -149,8 +165,8 @@ addLists_aux([],[],_,List,C) ->
 
 
 addLists_aux([LeastA|A], [LeastB|B], Base, List, C) ->
-    {NewCarry, Result} = addSingular(LeastA+C, LeastB, Base),
-      addLists_aux(A, B, Base, [Result|List], C).
+    {NewC, Result} = addSingular(LeastA+C, LeastB, Base),
+      addLists_aux(A, B, Base, [Result|List], NewC).
 
 
 %% @doc adds
