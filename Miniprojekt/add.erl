@@ -4,7 +4,7 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-%% @doc TODO: add documentation
+%% @doc starts the program. Give 2 integers to add(A and B) and a base to calculate the result in(Base)
 -spec start(A,B,Base) -> ok when 
       A::integer(),
       B::integer(), 
@@ -13,7 +13,7 @@
 start(A,B, Base) ->
     start(A, B, Base, {1}).
 
-%% @doc TODO: add documentation
+%% @doc Same as start/3 but now you can add a tuple that let you choose how many segments you wanna split the addition into.
 -spec start(A,B,Base, Options) -> ok when 
       A::integer(),
       B::integer(), 
@@ -38,7 +38,7 @@ start(A,B,Base, {Splits}) ->
    LastWorker = element(2,lists:keyfind(length(ASplit), 1, Workers)),
    LastWorker ! {length(ASplit)+1, 0},
 
-   Sum = collect(length(ASplit), [], Workers),
+   Sum = collect([], Workers),
    NewSum = listToInt(Sum),
    io:format("~n  ----------~n"),
    io:format("   ~w~n", [A]),
@@ -46,16 +46,7 @@ start(A,B,Base, {Splits}) ->
    io:format(" + ---------~n"),
    io:format("   ~w~n",[NewSum]).
 
-    
 
-listToInt(L) ->
-listToInt_aux(L,0).
-
-listToInt_aux([],Acc) ->
-Acc;
-
-listToInt_aux([Lh|Lt],Acc) ->
-listToInt_aux(Lt,Acc*10+Lh).
 
 
 %% @doc divides the work among workers
@@ -74,7 +65,7 @@ listToInt_aux(Lt,Acc*10+Lh).
   | createWorkers(At,Bt,Base,St,PID)].
 
 
-%% @doc
+%% @doc creates two processes. one with a 0 as Carry and one with a 1 as Carry.
 -spec worker(A,B,Base,S,PID) -> ok when
   A::[integer()],
   B::[integer()],
@@ -100,7 +91,7 @@ listToInt_aux(Lt,Acc*10+Lh).
     end
   end.
 
-%% @doc 
+%% @doc make the calculation and waits for a signal of it holds the correct answer or not.
 -spec subworker(A,B,Base,S,PID,C) -> ok when
   A::[integer()],
   B::[integer()],
@@ -118,37 +109,45 @@ listToInt_aux(Lt,Acc*10+Lh).
     ok
   end.
 
-%% @doc 
+%% @doc receives calculation from workers and calculate the total sum
+-spec collect(SumList,Workers) -> ok when
+  SumList::[integer()],
+  Workers::[{integer(),worker}].
 
-collect(Segments, SumList, Workers) when 1 < length(Workers) -> 
+collect(SumList, Workers) when 1 < length(Workers) -> 
     receive
   {result, SegmentNumber, NewSum} ->
   NewWorkers = lists:keydelete(SegmentNumber, 1, Workers),
        Worker = element(2,lists:keyfind(SegmentNumber-1, 1, NewWorkers)),
       Worker!{SegmentNumber,element(1,NewSum)},
-      collect(Segments, [{SegmentNumber, NewSum}|SumList], NewWorkers)
+      collect([{SegmentNumber, NewSum}|SumList], NewWorkers)
     end;
 
-collect(_Segments, SumList, _) ->
+collect(SumList, _) ->
     receive
   {result, SegmentNumber, NewSum} ->
       SortedSumList = lists:keysort(1, [{SegmentNumber, NewSum} | SumList]),
       if element(1,NewSum) == 1 ->
-        sumListsToSum([ {0,{0,1}} | SortedSumList], []);
+        extractSum([ {0,{0,1}} | SortedSumList], []);
          true ->
-        sumListsToSum(SortedSumList, [])
+        extractSum(SortedSumList, [])
       end
     end.
 
 
-sumListsToSum([], Aux) ->
-    lists:flatten(lists:reverse(Aux));
+%% @doc extracts the sum from the sumList and adds them together
+-spec extractSum(L,Acc) -> ok when
+L::[{integer(),{integer(),integer()}}],
+Acc::[].
 
-sumListsToSum([{_,{_,Sum}}|SortedSumList], Aux) ->
-    sumListsToSum(SortedSumList,[Sum|Aux]).
+extractSum([], Acc) ->
+    lists:flatten(lists:reverse(Acc));
+
+extractSum([{_,{_,Sum}}|SortedSumList], Acc) ->
+    extractSum(SortedSumList,[Sum|Acc]).
 
 
-%% @doc
+%% @doc adds two lists of lists of integers together
 -spec addLists(A,B,Base,C) -> ok when
   A::[integer()],
   B::[integer()],
@@ -169,12 +168,12 @@ addLists_aux([LeastA|A], [LeastB|B], Base, List, C) ->
       addLists_aux(A, B, Base, [Result|List], NewC).
 
 
-%% @doc adds
+%% @doc adds two lists of integers
 addSingular(A,B, Base) ->
     Sum = A+B,
-    SumRem = Sum rem Base,
-    if (SumRem =/= Sum) ->
-      {1, SumRem};
+    R = Sum rem Base,
+    if (R =/= Sum) ->
+      {1, R};
        true ->
       {0, Sum}
     end.
@@ -251,6 +250,19 @@ case I of
   makeList(NewI,List)
   end.
 
+
+ %% @doc converts a List to an integer   
+-spec listToInt(L) -> ok when
+  L::[integer()].
+  
+listToInt(L) ->
+listToInt_aux(L,0).
+%% @doc help function to listToInt
+listToInt_aux([],Acc) ->
+Acc;
+
+listToInt_aux([Lh|Lt],Acc) ->
+listToInt_aux(Lt,Acc*10+Lh).
 
 %% doc prints the int C 
   -spec prntCarry(C) -> ok when
