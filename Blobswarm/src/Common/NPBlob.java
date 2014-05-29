@@ -93,7 +93,7 @@ public class NPBlob extends Blob implements Runnable{
 				blob = blobs[i];
 				}
 			}
-			if (blob.contains(super.getPosition())){
+			if (blob.contains(super.getPosition()) && blob.getInvulnerable() == false){
 				blob.setAlive(false);
 			}
 			if(!blob.getAlive()) {

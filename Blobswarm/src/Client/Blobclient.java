@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -113,8 +114,10 @@ public class Blobclient implements KeyListener {
 
 			private void updateNPBs(ArrayList<InfoNPB> NPBArray) {
 				for(InfoNPB npb : NPBArray){
+					if(npb != null){
 					 NPBlobView newBV = NPBlobViews.get(NPBArray.indexOf(npb));
 				     newBV.set(npb.getPosition(),npb.getDirection());
+					}
 				}
 			}
 

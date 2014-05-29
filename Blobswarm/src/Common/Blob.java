@@ -12,6 +12,8 @@ public class Blob {
 	private String name;
 	private int speed = 5;
 	private boolean alive;
+	private int counter = 90;
+	private boolean invulnerable = true;
 	private Size size = new Size(70,55); //To Change blobSize change this
 	
 	//Constructor
@@ -110,7 +112,9 @@ public class Blob {
 	
 
 	//Help methods
-	private void updateLocation(int direction) {		
+	private void updateLocation(int direction) {
+		counter -= 1;
+		if (counter <= 0) invulnerable = false;
 		switch (direction) {
 		case 1:	//Upp
 			if(this.position.y >= 25)
@@ -133,7 +137,12 @@ public class Blob {
 		}
 		return;
 	}
+
+	public boolean getInvulnerable() {
+		return invulnerable;
+	}
 	
-	//TODO equal funktion that check ID and return true if same ID
+
+	
 	
 }
