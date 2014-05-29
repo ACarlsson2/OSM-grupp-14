@@ -50,7 +50,7 @@ public class World {
 
 		for(int i = 0; i < playerBlobs.length; i++){
 			if(!blob.equals(playerBlobs[i])){
-				if(playerBlobs[i].contains(destination)){
+				if(playerBlobs[i].contains(destination) && playerBlobs[i].getAlive()){
 					blob.setDirection(direction);					
 					return false;
 				}					
