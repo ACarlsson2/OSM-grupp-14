@@ -127,6 +127,9 @@ public class Blobclient implements KeyListener {
 					currBlob.setAlive(blobinfo.get(i).getAlive());
 						currBlob.update(blobinfo.get(i).getPosition(),	
 							blobinfo.get(i).getDirection());
+						if(!currBlob.getAlive()){
+							chatFrame.getPanel().setComponentZOrder(currBlob.getJComponent(),chatFrame.getPanel().getComponentZOrder(chatFrame.backgroundLabel)-1);
+						}
 					
 				}
 			}
@@ -266,7 +269,7 @@ public class Blobclient implements KeyListener {
 		CardLayout cardLayout;
 		JProgressBar progressBar;
 		JPanel thePanel;
-		JLabel backgroundLabel;
+		protected JLabel backgroundLabel;
 		ImageIcon[] BGimages;
 		int BGimage = 0;
 		int animateQueue = 1;
