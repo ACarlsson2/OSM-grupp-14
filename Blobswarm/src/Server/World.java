@@ -29,7 +29,7 @@ public class World {
 	 * @param direction
 	 * @return true if moved false if not
 	 */
-	public synchronized boolean attemptMove(Blob blob, int direction){
+	public boolean attemptMove(Blob blob, int direction){
 		Point destination = new Point(blob.getPosition());
 		switch (direction) {
 		case 1:	//Up
@@ -56,7 +56,7 @@ public class World {
 				}					
 			}	
 		}
-		blob.move(direction);
+		this.move(blob, direction);
 		return true;
 	}
 	
@@ -138,6 +138,10 @@ public class World {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+	
+	public synchronized void move(Blob blob, int dir){
+		blob.move(dir);
 	}
 	
 }
