@@ -23,9 +23,10 @@ public class World {
 	}
 	
 	//Methods
-	/** TODO
+	/** 
+	 * This will move the blob in the direction if possible
 	 * Side effect: Moves the Blob if allowed and nothing hinders it
-	 * @param blob
+	 * @param blob 
 	 * @param direction
 	 * @return true if moved false if not
 	 */
@@ -62,8 +63,7 @@ public class World {
 	
 	
 	/**
-	 * Spawns n NPBs
-	 * @param n
+	 * Spawns NPBs
 	 */
 	public void spawnNPB(){
 		for (int i = 0; i < numNPB; i++) {
@@ -90,7 +90,7 @@ public class World {
 	/**
 	 * Checks if a position is safe to spawn in.
 	 * @param blob
-	 * @return
+	 * @return true if a conflict occurred otherwise false
 	 */
 	private boolean checkConflictingPosition(Blob blob){
 		boolean conflict = false;

@@ -42,14 +42,18 @@ public class Blob {
 	}
 	
 	//Methods
+	/**
+	 * Move the Blob to new location
+	 * @param direction - where blob is trying to move
+	 */
 	public void move(int direction){
 			this.direction = direction;
 			updateLocation(direction);
 	}
 	/**
-	 * Check if pos exist inside a blob
-	 * @param pos 
-	 * @return
+	 * Check if position exist inside a blob
+	 * @param pos - a position
+	 * @return true/false
 	 */
 	public boolean contains(Point pos){
 		double width = pos.getX();
@@ -112,6 +116,10 @@ public class Blob {
 	
 
 	//Help methods
+	/**
+	 * Update the blobs new location 
+	 * @param direction
+	 */
 	private void updateLocation(int direction) {
 		counter -= 1;
 		if (counter <= 0) invulnerable = false;

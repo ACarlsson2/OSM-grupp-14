@@ -71,9 +71,8 @@ public class ClientHandler extends Listener {
 
 	}
 
-	private void updateNames () {//TODO Can this run also when a player disconnect? For me to "update" current players ?
-		//x marked comments to update something every players pos.
-		// Collect the names for each connection.
+	//TODO
+	private void updateNames () {
 		Connection[] connections = server.getConnections();
 		int totalConnections = connections.length; //x
 		ArrayList<String> names = new ArrayList<String>(totalConnections);//x
