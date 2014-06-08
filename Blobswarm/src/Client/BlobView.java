@@ -60,6 +60,13 @@ public class BlobView {
     }
     
     //Methods
+    
+    /**
+	 * Updates the position and direction of the blob.
+	 * @param loc - new position
+	 * @param dir - new direction
+	 */
+    
     public void update(Point loc, int dir) { 	
    	
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);
@@ -90,6 +97,10 @@ public class BlobView {
         }
     }
 
+    /**
+	 * Sets the font, color and alignment of the name text.
+	 */
+    
 	private void styleBlobName() {
 		//Styling of text above the blobs
         Font styleText = new Font("Arial", Font.BOLD, 12);
@@ -108,6 +119,11 @@ public class BlobView {
     public int getID(){
     	return this.ID;
     }
+    
+    /**
+	 * Updates the alive state of the blob and changes its picture if it becomes dead.
+	 * @param alive - new alive state.
+	 */
     
     public void setAlive(boolean alive){
     	this.alive = alive;

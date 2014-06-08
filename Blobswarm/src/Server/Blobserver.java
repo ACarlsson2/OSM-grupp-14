@@ -14,14 +14,9 @@ import Common.InfoNPB;
 import Common.NPBlob;
 import Common.Network;
 import Common.Network.Blobs;
-import Common.Network.ChatMessage;
 import Common.Network.NPBlobs;
-import Common.Network.RegisterName;
-import Common.Network.ServerInput;
-import Common.Network.UpdateNames;
 
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
 
@@ -40,7 +35,7 @@ public class Blobserver {
 			protected Connection newConnection () {
 				// By providing our own connection implementation, we can store per
 				// connection state without a connection ID to state look up.
-				return new ChatConnection();
+				return new BlobConnection();
 			}
 		};
 
@@ -70,7 +65,7 @@ public class Blobserver {
 			Connection[] connections = server.getConnections();
 			ArrayList<Blob> blobs = new ArrayList<Blob>(connections.length);
 			for (int i = 0; i < connections.length; i++) {
-				ChatConnection connection = (ChatConnection)connections[i];
+				BlobConnection connection = (BlobConnection)connections[i];
 				if (connection.name == null) continue;
 				blobs.add(connection.blob);
 			}
@@ -101,7 +96,7 @@ public class Blobserver {
 
 	
 	// This holds per connection state.
-	public static class ChatConnection extends Connection {
+	public static class BlobConnection extends Connection {
 		public String name;
 		public Blob blob;
 	}

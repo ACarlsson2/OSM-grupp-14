@@ -5,7 +5,6 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -39,7 +38,7 @@ import com.esotericsoftware.minlog.Log;
 
 public class Blobclient implements KeyListener {
 	// Fields
-	ChatFrame chatFrame;
+	BlobFrame blobFrame;
 	Client client;
 	String name;
 	ArrayList<Integer> existingBlobIDs = new ArrayList<Integer>();
@@ -66,7 +65,7 @@ public class Blobclient implements KeyListener {
 			public void received(Connection connection, Object object) {
 				if (object instanceof UpdateNames) {
 					UpdateNames updateNames = (UpdateNames) object;
-					chatFrame.setNames(updateNames.names);
+					blobFrame.setNames(updateNames.names);
 					return;
 				}
 
@@ -80,7 +79,7 @@ public class Blobclient implements KeyListener {
 					}
 
 					if (blobinfo.size() > 0) {
-						chatFrame.animate();
+						blobFrame.animate();
 						checkNewBlobs(blobinfo);
 						removeDeadBlobs(blobinfo);
 						updateBlobs(blobinfo);
@@ -99,19 +98,24 @@ public class Blobclient implements KeyListener {
 					while(NPBlobViews.size() < NPBArray.size()){ // Not enough NPBlobViews
 						NPBlobView newBV = new NPBlobView();
 						NPBlobViews.add(newBV);
-						chatFrame.getPanel().add(newBV.getJComponent());
-					    chatFrame.getPanel().setComponentZOrder(newBV.getJComponent(), 0);
+						blobFrame.getPanel().add(newBV.getJComponent());
+					    blobFrame.getPanel().setComponentZOrder(newBV.getJComponent(), 0);
 					}
 					while(NPBlobViews.size() > NPBArray.size()){ // Too many NPBlobViews
 						NPBlobViews.remove(NPBlobViews.get(NPBlobViews.size()-1));
-						chatFrame.getPanel().remove(NPBlobViews.get(NPBlobViews.size()-1).getJComponent());
+						blobFrame.getPanel().remove(NPBlobViews.get(NPBlobViews.size()-1).getJComponent());
 					}
 					
-					chatFrame.getPanel().repaint();
+					blobFrame.getPanel().repaint();
 					updateNPBs(NPBArray);
 				}
 			}
 
+			/**
+			 * Update the positions and directions of every NPBlobView.
+			 * @param NPBArray - the new positions and directions.
+			 */
+			
 			private void updateNPBs(ArrayList<InfoNPB> NPBArray) {
 				for(InfoNPB npb : NPBArray){
 					if(npb != null){
@@ -121,18 +125,28 @@ public class Blobclient implements KeyListener {
 				}
 			}
 
+			/**
+			 * Update the positions and directions of every BlobView.
+			 * @param blobinfo - array of Blob containing the new positions and directions.
+			 */
+			
 			private void updateBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {
-					BlobView currBlob = findBlobView(blobinfo,(blobinfo.get(i).getID()));
+					BlobView currBlob = findBlobView(blobinfo.get(i).getID());
 					currBlob.setAlive(blobinfo.get(i).getAlive());
 						currBlob.update(blobinfo.get(i).getPosition(),	
 							blobinfo.get(i).getDirection());
 						if(!currBlob.getAlive()){
-							chatFrame.getPanel().setComponentZOrder(currBlob.getJComponent(),chatFrame.getPanel().getComponentZOrder(chatFrame.backgroundLabel)-1);
+							blobFrame.getPanel().setComponentZOrder(currBlob.getJComponent(),blobFrame.getPanel().getComponentZOrder(blobFrame.backgroundLabel)-1);
 						}
 					
 				}
 			}
+			
+			/**
+			 * Check if new BlobViews need to be created.
+			 * @param blobinfo - array of Blob containing all Blobs IDs needed to check if each Blob has a corresponding BlobView
+			 */
 
 			private void checkNewBlobs(ArrayList<Blob> blobinfo) {
 				for (int i = 0; i < blobinfo.size(); i++) {
@@ -140,32 +154,43 @@ public class Blobclient implements KeyListener {
 						existingBlobIDs.add((blobinfo.get(i)).getID());
 						BlobView newBlob = new BlobView(blobinfo.get(i).getID(),blobinfo.get(i).getName());
 						blobViews.add(newBlob);
-						chatFrame.getPanel().add(
+						blobFrame.getPanel().add(
 								newBlob.getJComponent());
-						chatFrame.getPanel().add(
+						blobFrame.getPanel().add(
 								newBlob.getNameLabel());
-						chatFrame.getPanel().setComponentZOrder(
+						blobFrame.getPanel().setComponentZOrder(
 								newBlob.getJComponent(), 0);
-						chatFrame.getPanel().setComponentZOrder(
+						blobFrame.getPanel().setComponentZOrder(
 								newBlob.getNameLabel(), 0);
 						
 					}
 				}
 			}
 			
+			/**
+			 * Check if any BlobViews should be removed.
+			 * @param blobinfo -  array of Blob containing all Blobs IDs needed to check if each BlobView has a corresponding Blob
+			 */
+			
 			private void removeDeadBlobs(ArrayList<Blob> blobinfo){
 				for(BlobView blobPointer : blobViews)
 				{
 					if(findBlob(blobinfo,blobPointer.getID()) == null)
 					{
-						chatFrame.getPanel().remove(blobPointer.getJComponent());
-						chatFrame.getPanel().remove(blobPointer.getNameLabel());
-						chatFrame.getPanel().repaint();
+						blobFrame.getPanel().remove(blobPointer.getJComponent());
+						blobFrame.getPanel().remove(blobPointer.getNameLabel());
+						blobFrame.getPanel().repaint();
 					}
 				}
 			}
+			
+			/**
+			 * Find BlobView with the given ID.
+			 * @param blobID - the ID to search for.
+			 * @return the found BlobView, or null if not found.
+			 */
 
-			private BlobView findBlobView(ArrayList<Blob> blobinfo, int blobID){
+			private BlobView findBlobView(int blobID){
 				for(BlobView blobPointer : blobViews)
 				{
 					if(blobPointer.getID() == blobID){
@@ -174,6 +199,12 @@ public class Blobclient implements KeyListener {
 				}
 				return null;
 			}
+			
+			/**
+			 * Find Blob with the given ID.
+			 * @param blobID - the ID to search for.
+			 * @return the found Blob, or null if not found.
+			 */
 			
 			private Blob findBlob(ArrayList<Blob> blobinfo, int blobID){
 				for(Blob blobPointer : blobinfo)
@@ -185,13 +216,12 @@ public class Blobclient implements KeyListener {
 				return null;
 			}
 			
-			
 			public void disconnected(Connection connection) {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						// Closing the frame calls the close listener which will
 						// stop the client's update thread.
-						chatFrame.dispose();
+						blobFrame.dispose();
 					}
 				});
 			}
@@ -215,17 +245,17 @@ public class Blobclient implements KeyListener {
 
 		// All the ugly Swing stuff is hidden in ChatFrame so it doesn't clutter
 		// the KryoNet example code.
-		chatFrame = new ChatFrame(host);
+		blobFrame = new BlobFrame(host);
 
-		chatFrame.addKeyListener(this);
+		blobFrame.addKeyListener(this);
 
 		// This listener is called when the chat window is closed.
-		chatFrame.setCloseListener(new Runnable() {
+		blobFrame.setCloseListener(new Runnable() {
 			public void run() {
 				client.stop();
 			}
 		});
-		chatFrame.setVisible(true);
+		blobFrame.setVisible(true);
 
 		// We'll do the connect on a new thread so the ChatFrame can show a
 		// progress bar.
@@ -247,6 +277,12 @@ public class Blobclient implements KeyListener {
 	}
 	
 	//Methods
+	
+	/**
+	 * Update output when a key is pressed.
+	 * @param e - the key event containing what key it was.
+	 */
+	
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyChar()=='w')output.up = true;
 		if(e.getKeyChar()=='s')output.down = true;
@@ -257,15 +293,20 @@ public class Blobclient implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 
 	}
-
+	
+	/**
+	 * Update output when a key is released.
+	 * @param e - the key event containing what key it was.
+	 */
+	
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyChar()=='w')output.up = false;
 		if(e.getKeyChar()=='s')output.down = false;
 		if(e.getKeyChar()=='a')output.left = false;
 		if(e.getKeyChar()=='d')output.right = false;
 	}
-
-	static private class ChatFrame extends JFrame {
+	
+	static private class BlobFrame extends JFrame {
 		CardLayout cardLayout;
 		JProgressBar progressBar;
 		JPanel thePanel;
@@ -274,7 +315,7 @@ public class Blobclient implements KeyListener {
 		int BGimage = 0;
 		int animateQueue = 1;
 
-		public ChatFrame(String host) {
+		public BlobFrame(String host) {
 			super("Blobswarm");
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			setSize(1200, 600);
@@ -332,6 +373,10 @@ public class Blobclient implements KeyListener {
 			return thePanel;
 		}
 
+		/**
+		 * Animates the background picture - changes the picture it 3 times per second.
+		 */
+		
 		public void animate(){
 			   if(animateQueue > (BGimages.length)*10) {
 				   animateQueue = 1;

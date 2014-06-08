@@ -8,7 +8,7 @@ import Common.Network.ChatMessage;
 import Common.Network.RegisterName;
 import Common.Network.ServerInput;
 import Common.Network.UpdateNames;
-import Server.Blobserver.ChatConnection;
+import Server.Blobserver.BlobConnection;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -25,8 +25,8 @@ public class ClientHandler extends Listener {
 	}
 	
 	public void received (Connection c, Object object) {
-		// We know all connections for this server are actually ChatConnections.
-		ChatConnection connection = (ChatConnection)c;
+		// We know all connections for this server are actually BlobConnections.
+		BlobConnection connection = (BlobConnection)c;
 
 		if (object instanceof ServerInput) {
 			if (connection.name == null) return;
@@ -78,7 +78,7 @@ public class ClientHandler extends Listener {
 		ArrayList<String> names = new ArrayList<String>(totalConnections);//x
 		world.setPlayers(new Blob[totalConnections]);//x	
 		for (int i = connections.length - 1; i >= 0; i--) {
-			ChatConnection connection = (ChatConnection)connections[i];
+			BlobConnection connection = (BlobConnection)connections[i];
 			names.add(connection.name);
 			world.getPlayers()[i] = connection.blob;//x
 		}

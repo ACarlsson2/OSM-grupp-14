@@ -48,6 +48,13 @@ public class NPBlobView {
     }
     
     //Methods
+    
+    /**
+	 * Updates the position and direction of the blob.
+	 * @param loc - the new position
+	 * @param dir - the new direction
+	 */
+    
     public void set(Point loc, int dir) { 	
    	
         this.comp.setBounds((int)loc.getX() - SIZE/2, (int)loc.getY() - SIZE/2, SIZE, SIZE);

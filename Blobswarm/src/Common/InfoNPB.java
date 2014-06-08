@@ -1,7 +1,6 @@
 package Common;
 
 import java.awt.Point;
-import java.util.List;
 
 public class InfoNPB {
 	//Fields
@@ -22,7 +21,7 @@ public class InfoNPB {
 	//Method
 	/**
 	 * Update every Field from the npb
-	 * @param npb - None player blob
+	 * @param npb - Non player blob
 	 */
 	public void update(NPBlob npb) {
 		this.point = npb.getPosition();
